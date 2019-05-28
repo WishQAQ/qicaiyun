@@ -26,7 +26,7 @@ const CourseMenu = () => import('@/views/menu/courseMenu')
 const LuckyWheel = () => import('@/views/luckyWheel/luckyWheel')
 
 const router = new Router({
-  mode: 'history',
+  // mode: 'history',
   routes: [
     {
       path: '/',
