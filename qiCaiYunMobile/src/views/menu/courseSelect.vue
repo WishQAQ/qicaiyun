@@ -24,7 +24,6 @@
 <script>
   export default {
     name: "courseSelect",
-    // props:['isActive' , 'isClick'],
     data(){
       return{
         menuList:[
@@ -55,23 +54,23 @@
       clickCourse(i){
         this.isClick = i-1;
 
-          if(this.$refs.listBox[i-1].className === 'course_box'){
-            if(this.clickNum <9){
-              this.$refs.listBox[i-1].className = 'course_box clickCourse';// 添加类
-              this.clickNum ++
-              console.log('数量  '+this.clickNum);
-            }else {
-              this.$message({
-                message: '最多只可选择4项课程',
-                type: 'warning'
-              });
-            }
-          }else{
-            this.$refs.listBox[i-1].className = 'course_box';// 选中再取消的情况
-            this.isClick = ''
-            this.clickNum --
+        if(this.$refs.listBox[i-1].className === 'course_box'){
+          if(this.clickNum <9){
+            this.$refs.listBox[i-1].className = 'course_box clickCourse';// 添加类
+            this.clickNum ++
             console.log('数量  '+this.clickNum);
+          }else {
+            this.$message({
+              message: '最多只可选择4项课程',
+              type: 'warning'
+            });
           }
+        }else{
+          this.$refs.listBox[i-1].className = 'course_box';// 选中再取消的情况
+          this.isClick = ''
+          this.clickNum --
+          console.log('数量  '+this.clickNum);
+        }
 
 
         this.$emit('childByValue', [this.isActive , this.isClick])
@@ -86,11 +85,10 @@
     },
     mounted() {
       this.isActive = 0;
-      //
-      // this.axios.get('/api/numberone_auth_war_exploded/course/queryCourseTypeAndCourseList.action')
-      //   .then(res => {
-      //     console.log(res.data);
-      //   })
+      this.$http.post('/users/logout')
+        .then(res=>{
+          console.log(res);
+        })
     }
   }
 </script>
