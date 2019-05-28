@@ -87,7 +87,7 @@
     mounted() {
       this.isActive = 0;
 
-      this.axios.get('https://api.coindesk.com/v1/bpi/currentprice.json')
+      this.axios.get('http://qcy.mynatapp.cc/numberone_auth_war_exploded/course/queryCourseTypeAndCourseList.action')
         .then(res => {
           console.log(res);
         })
