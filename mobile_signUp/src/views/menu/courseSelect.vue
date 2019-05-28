@@ -86,11 +86,11 @@
     },
     mounted() {
       this.isActive = 0;
-
-      this.axios.get('http://qcy.mynatapp.cc/numberone_auth_war_exploded/course/queryCourseTypeAndCourseList.action')
-        .then(res => {
-          console.log(res);
-        })
+      //
+      // this.axios.get('/api/numberone_auth_war_exploded/course/queryCourseTypeAndCourseList.action')
+      //   .then(res => {
+      //     console.log(res.data);
+      //   })
     }
   }
 </script>
