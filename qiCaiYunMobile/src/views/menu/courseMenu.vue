@@ -1,29 +1,34 @@
 <template>
-  <div class="courseMenu">
-    <NavTitle :title="menuClick?'课程选择':'夏令营选择'"></NavTitle>
+  <div class="courseMenu" v-loading="loading">
+    <NavTitle :title="menuClick === 1?'课程选择':menuClick === 2?'夏令营选择':''"></NavTitle>
     <div class="main">
-      <div class="banner" v-if="menuClick"></div>
-      <div class="banner summerCamp" v-else></div>
+      <div class="banner" v-if="menuClick === 1"></div>
+      <div class="banner summerCamp" v-if="menuClick === 2"></div>
 
       <div class="main_menu">
         <div
           class="menu_button"
-          v-bind:class="menuClick?'courseClick':''"
+          v-bind:class="menuClick===1?'courseClick':''"
           @click="openCourse()"
         >课程选择</div>
         <div
           class="menu_button"
-          v-bind:class="!menuClick?'courseClick':''"
+          v-bind:class="menuClick===2?'courseClick':''"
           @click="openSummerCamp()"
         >夏令营选择</div>
       </div>
 
-      <CourseSelect v-on:childByValue="childByValue" ref="select" v-if="menuClick"></CourseSelect>
-      <SummerCampSelect v-else></SummerCampSelect>
+      <CourseSelect
+        v-on:childByValue="childByValue"
+        ref="select"
+        v-if="menuClick===1"
+        :getCourse="courseList"
+      ></CourseSelect>
+      <SummerCampSelect v-loading="campLoading" v-if="menuClick===2" :getCamp="campList"></SummerCampSelect>
 
     </div>
 
-    <div v-if="menuClick" class="courseMenuSubmit" @click="getCourseSubmit()">支付</div>
+    <div v-if="menuClick" class="courseMenuSubmit" @click="getCourseSubmit()">确定</div>
 
   </div>
 </template>
@@ -40,25 +45,36 @@
       CourseSelect,
       SummerCampSelect
     },
-    created(){
-
-    },
     data(){
       return{
-        menuClick:true,
-        childVal: ''
+        menuClick: 0,
+        childVal: '',
+        courseList: [],
+        campList: [],
+        loading: true,
+        campLoading: true,
+        childId: '',
       }
     },
     methods:{
       openCourse(){
-        this.menuClick = true
+        this.menuClick = 1
       },
       openSummerCamp(){
-        this.menuClick = false
+        this.menuClick = 2;
+        this.$http.get('/camp/queryCampList.action')
+          .then(res=>{
+            if(res.code = 20000){
+              this.campLoading = false
+              this.menuClick= 2
+              this.campList = res.data.data.campList
+              console.log(this.campList)
+            }
+          })
       },
-      childByValue: function (childValue) {
-        this.childVal = childValue
-        console.log(childValue);
+      childByValue(childValue) {
+        this.childVal = childValue;
+        console.log(this.childVal);
       },
       getCourseSubmit(){
         if(this.childVal['1'] === ''||this.childVal === ''){
@@ -68,8 +84,12 @@
           });
         }else {
           this.$router.push({
-            path: '/home/infoInitial',
-            query: {}
+            path: '/home/classTime',
+            query: {
+              name: 'classTime',
+              course: this.courseList,
+              checkCourse: this.childVal
+            }
           });
           this.$message({
             message: '正在跳转',
@@ -77,6 +97,17 @@
           });
         }
       },
+    },
+    created () {
+        this.$http.get('/course/queryCourseTypeAndCourseList.action')
+          .then(res=>{
+            if(res.code = 20000){
+              this.loading= false
+              this.menuClick= 1
+              this.courseList = res.data.data.courseTypeList
+              console.log(this.courseList)
+            }
+          })
     }
   }
 </script>

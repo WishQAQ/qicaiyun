@@ -41,55 +41,55 @@
   export default {
     data() {
       return {
-        easejoy_bean: 0, //金豆
+        easejoy_bean: 0,
         lottery_ticket: 0, //抽奖次数
         prize_list: [
           {
             icon: "../../assets/img/bean_500.png", // 奖品图片
-            count: 10, // 奖品数量
-            name: "易趣豆", // 奖品名称
+            count: '一等奖', // 奖品等级
+            name: "华为P30", // 奖品名称
             isPrize: 1 // 该奖项是否为奖品
           },
           {
             icon: "../../assets/img/bean_five.png",
-            count: 5,
-            name: "豆",
+            count: '二等奖',
+            name: "智博星学习机",
             isPrize: 1
           },
           {
             icon: "../../assets/img/bean_one.png",
-            count: 10,
-            name: "易趣豆",
+            count: '三等奖',
+            name: "茶具大礼包",
             isPrize: 1
           },
           {
             icon: "../../assets/img/point_five.png",
-            count: 5,
-            name: "积分",
+            count: '四等奖',
+            name: "大礼包",
             isPrize: 1
           },
           {
             icon: "../../assets/img/point_ten.png",
-            count: 10,
-            name: "积分",
+            count: '五等奖',
+            name: "30元优惠券",
             isPrize: 1
           },
           {
             icon: "../../assets/img/bean_500.png",
-            count: 10,
-            name: "易趣豆",
+            count: '纪念奖',
+            name: "10元优惠券",
             isPrize: 1
           },
           {
             icon: "../../assets/img/give_up.png",
-            count: 0,
-            name: "未中奖",
+            count: '鼓励奖',
+            name: "小礼包",
             isPrize: 0
           },
           {
             icon: "../../assets/img/bean_500.png",
-            count: 10,
-            name: "易趣豆",
+            count: '参与奖',
+            name: "小礼包",
             isPrize: 1
           }
         ], //奖品列表
@@ -111,8 +111,8 @@
     computed: {
       toast_title() {
         return this.hasPrize
-          ? "恭喜您，获得" +this.prize_list[this.index].count + ' ' + this.prize_list[this.index].name
-          : "未中奖";
+          ? "恭喜您，获得 " +this.prize_list[this.index].count + ' ' + this.prize_list[this.index].name
+          : "";
       },
       toast_pictrue() {
         return this.hasPrize
@@ -151,7 +151,7 @@
           var that = this;
           // 旋转结束后，允许再次触发
           setTimeout(function() {
-            that.click_flag = true;
+            that.click_flag = false;
             that.game_over();
           }, during_time * 1000 + 1500); // 延时，保证转盘转完
         } else {
@@ -283,10 +283,10 @@
     margin-top: .2rem;
   }
   .prize-count {
-    font-size: 0.3rem;
+    font-size: 0.2rem;
   }
   .prize-type {
-    font-size: .2rem;
+    font-size: .16rem;
   }
   .toast-mask {
     position: fixed;

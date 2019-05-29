@@ -2,7 +2,7 @@
   <div class="courseSelect">
     <div class="menu_list">
       <div class="menu_box">
-        <div class="list_name" v-bind:class="{ active:index == isActive }" @click="clickMenuList(index)" v-for="(item , index) in menuList" :key="index">{{item.name}}</div>
+        <div class="list_name" v-bind:class="{ active:index == isActive }" @click="clickMenuList(index)" v-for="(item , index) in courseList" :key="index">{{item.courseTypeName}}</div>
       </div>
       <div class="more_button" @click="openMore()"></div>
       <div class="more_box" v-if="moreBox">
@@ -10,36 +10,34 @@
       </div>
     </div>
 
-
     <div class="list_box">
-      <div ref="listBox" class="course_box" v-on:click="clickCourse(i)" v-for="i in 8" :key="i">
-        <img src="../../assets/images/children_pinyin.png" alt="">
-        拼音
-      </div>
+
+      <el-checkbox-group
+        v-model="checkedList"
+        @change="handleCheckChange()"
+        :max="10">
+        <el-checkbox v-for="(list , i) in courseName" :label="list" :key="i">
+          <img :src="list.courseImg" alt="">
+          {{list.username}}
+        </el-checkbox>
+      </el-checkbox-group>
     </div>
+
+<!--    [list.courseId,list.coureseImg,list.username]-->
 
   </div>
 </template>
 
 <script>
+  const cityOptions = []
   export default {
     name: "courseSelect",
+    props: ['getCourse'],
     data(){
       return{
-        menuList:[
-          {name: '少儿类'},
-          {name: '初中类'},
-          {name: '高中类'},
-          {name: '舞蹈类'},
-          {name: '运动类'},
-          {name: '兴趣类'},
-          {name: '少儿类'},
-          {name: '初中类'},
-          {name: '高中类'},
-          {name: '舞蹈类'},
-          {name: '运动类'},
-          {name: '兴趣类'},
-        ],
+        courseList: [],
+        checkedList: [],
+        courseName: cityOptions,
         moreBox: false,
         isActive: '',
         checkedCities: '',
@@ -49,31 +47,17 @@
     },
     methods:{
       clickMenuList(index){
-        this.isActive = index
+        this.isActive = index;
+        this.courseName = this.courseList[this.isActive].courseList;
       },
-      clickCourse(i){
-        this.isClick = i-1;
-
-        if(this.$refs.listBox[i-1].className === 'course_box'){
-          if(this.clickNum <9){
-            this.$refs.listBox[i-1].className = 'course_box clickCourse';// 添加类
-            this.clickNum ++
-            console.log('数量  '+this.clickNum);
-          }else {
-            this.$message({
-              message: '最多只可选择4项课程',
-              type: 'warning'
-            });
-          }
-        }else{
-          this.$refs.listBox[i-1].className = 'course_box';// 选中再取消的情况
-          this.isClick = ''
-          this.clickNum --
-          console.log('数量  '+this.clickNum);
+      handleCheckChange(){
+        if(this.checkedList.length ==10){
+          this.$message({
+            message: '您已选择完十项课程',
+            type: 'warning'
+          });
         }
-
-
-        this.$emit('childByValue', [this.isActive , this.isClick])
+        this.$emit('childByValue', this.checkedList)
       },
       openMore(){
         if(!this.moreBox){
@@ -83,13 +67,11 @@
         }
       },
     },
-    mounted() {
+    mounted(){
+      this.courseList = this.getCourse
       this.isActive = 0;
-      this.$http.post('/users/logout')
-        .then(res=>{
-          console.log(res);
-        })
-    }
+      this.courseName = this.courseList[this.isActive].courseList
+    },
   }
 </script>
 
@@ -151,37 +133,50 @@
       display: flex;
       align-items: center;
       margin-top: .48rem;
-      flex-wrap: wrap;
-      .course_box{
+      /deep/.el-checkbox-group{
+        width: 100%;
         display: flex;
         align-items: center;
-        height: .8rem;
-        padding: 0 .24rem;
-        background:rgba(242,242,242,1);
-        border-radius:10px;
-        font-size: .22rem;
-        font-family:PingFang-SC-Bold;
-        color:rgba(153,153,153,1);
-        font-weight:bold;
-        margin-bottom: .3rem;
-        &.clickCourse{
-          background:rgba(247,85,82,1);
-          box-shadow:1px 2px 7px 1px rgba(247,85,82,0.79);
-          color:rgba(255,255,255,1);
-
-        }
-        &:not(:nth-child(3n)){
-          margin-right: 1.3rem;
-        }
-        >img{
-          width: .38rem;
-          height: .46rem;
-          object-fit: cover;
-          margin-right: .14rem;
-          font-size: .22rem;
-          font-family:PingFang-SC-Bold;
-          font-weight:bold;
-          color:rgba(255,255,255,1);
+        flex-wrap: wrap;
+        .el-checkbox{
+          width: 30%;
+          height: .8rem;
+          margin: 0 0 .3rem 0;
+          background:rgba(242,242,242,1);
+          border-radius:10px;
+          &:not(:nth-child(3n)){
+            margin-right: .3rem;
+          }
+          &.is-checked{
+            background:rgba(247,85,82,1);
+            box-shadow:1px 2px 7px 1px rgba(247,85,82,0.79);
+            .el-checkbox__label{
+              color:rgba(255,255,255,1);
+            }
+          }
+          .el-checkbox__input{
+            display: none;
+          }
+          .el-checkbox__label{
+            display: flex;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            font-size: .22rem;
+            font-family:PingFang-SC-Bold;
+            color:rgba(153,153,153,1);
+            font-weight:bold;
+            >img{
+              width: 0.45rem;
+              height: 0.48rem;
+              object-fit: cover;
+              margin-right: .14rem;
+              font-size: .22rem;
+              font-family:PingFang-SC-Bold;
+              font-weight:bold;
+              color:rgba(255,255,255,1);
+            }
+          }
         }
       }
     }

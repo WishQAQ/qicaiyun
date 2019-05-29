@@ -6,13 +6,13 @@ const path = require('path')
 
 module.exports = {
   dev: {
-
     // Paths
     assetsSubDirectory: 'static',
-    assetsPublicPath: './',
+    assetsPublicPath: '/',
     proxyTable: {
       '/api/**': {
-        target: 'http://localhost:3000',
+        target: 'https://qcy.mynatapp.cc',
+        changeOrigin: true,
         pathRewrite:{
           '^/api':'/'
         }

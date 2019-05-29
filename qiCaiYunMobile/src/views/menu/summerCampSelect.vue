@@ -1,21 +1,18 @@
 <template>
   <div class="summerCampSelect">
-    <div class="main">
+    <div class="main" v-for="(item , index) in getCamp" :key="index">
       <div class="cover">
-        <img src="../../assets/images/summerCamp_photo.png" alt="">
-        <span class="summerCampPrice">&yen; 4500</span>
+        <img :src="item.campBanner" alt="">
+        <span class="summerCampPrice">&yen; {{item.price}}</span>
       </div>
-
       <div class="message">
         <div class="message_content">
-          <div class="title">重庆航空夏令营</div>
-          <div class="content">
-            让“航空梦”播种在每一个孩子的心中实施科教兴国战略和人才强国战略、提高全民素质，体验科学魅力，启迪创新思想。
-          </div>
+          <div class="title">{{item.campName}}</div>
+          <div class="content">{{item.campIntroduce}}</div>
         </div>
         <div class="message_box">
           <div class="time">
-            <p>第一期：7月1日-5日</p>
+            <p>第一期：{{item.campTime}}</p>
             <p>第二期：7月15日-19日</p>
           </div>
           <div class="more">更多详情</div>
@@ -27,7 +24,8 @@
 
 <script>
   export default {
-    name: "summerCampSelect"
+    name: "summerCampSelect",
+    props:['getCamp']
   }
 </script>
 

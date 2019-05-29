@@ -24,6 +24,10 @@ const MyPrize = () => import('@/views/prize/myPrize')
 const CourseMenu = () => import('@/views/menu/courseMenu')
 // 幸运转盘
 const LuckyWheel = () => import('@/views/luckyWheel/luckyWheel')
+// 夏令营详情页
+const SummerCamp = () => import('@/views/summerCamp/summerCamp')
+// 课程时间选择
+const ClassTime = () => import('@/views/menu/classTime')
 
 const router = new Router({
   // mode: 'history',
@@ -88,12 +92,38 @@ const router = new Router({
         name: 'CourseMenu',
         component: CourseMenu
       },{
+        // 课程时间选择
+        path: '/home/classTime',
+        name: 'ClassTime',
+        component: ClassTime
+      },{
         // 幸运转盘
         path: '/home/luckyWheel',
         name: 'LuckyWheel',
         component: LuckyWheel
+      },{
+        // 夏令营详情
+        path: '/home/summerCamp',
+        name: 'SummerCamp',
+        component: SummerCamp
       }]
     }]
 });
+
+// router.beforeEach(( to, from, next ) => {
+//   if (to.name != 'auth') {//判断当前是否是新建的auth路由空白页面
+//     let _token = sessionStorage.getItem('wechataccess_token');
+//     if (!_token) {//如果没有token,则让它授权
+//       //保存当前路由地址，授权后还会跳到此地址
+//       sessionStorage.setItem('beforeUrl', to.fullPath);
+//       //授权请求,并跳转http://m.water.ui-tech.cn/auth路由页面
+//       window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx93702596c4a16d03&redirect_uri=URL%2Fauth&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect';
+//     } else {
+//       next();
+//     }
+//   } else {
+//     next();
+//   }
+// });
 
 export default router;

@@ -32,7 +32,6 @@
             <div class="getUrl"></div>
           </div>
 
-
         </div>
 
       </div>
@@ -75,7 +74,7 @@
       getParentInfo(){
         // 家长信息
         this.$router.push({
-          path: '/home/infoInitial',
+          path: '/home/parentInfo',
           query: {}
         });
       },
@@ -101,6 +100,8 @@
   .userInfo{
     .userInfo_box{
       padding: 0 .24rem;
+      height: calc(100vh - 1.9rem);
+      overflow: auto;
 
       /*用户信息卡片*/
       .userInfo_card{

@@ -13,11 +13,11 @@
       FooterNav
     },
     created () {
-      console.log(this.getStatus(this.$route.path))
+      // console.log(this.getStatus(this.$route.path))
     },
     watch: {
       '$route' (to, from) {
-        console.log(this.getStatus(this.$route.path))
+        // console.log(this.getStatus(this.$route.path))
       }
     },
     methods: {
