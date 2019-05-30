@@ -2,86 +2,32 @@
   <div class="myCourse">
     <NavTitle :title="'我的课程'"></NavTitle>
 
-    <div class="main">
+    <div class="main" v-loading="loading">
       <div class="main_box course">
         <div class="title">
           <span class="title_icon"><img src="../../assets/images/course_icon.png" alt=""></span>
           已报名的课程
         </div>
 
-        <div class="main_content">
+        <div class="main_content" v-for="(item , index) in childrenMessage" :key="index">
 
           <div class="content_box">
-
-            <div class="course_list">
-              <div class="course_title">运动类</div>
-              <div class="course_lab">
-                <div class="lab_icon"><img src="../../assets/images/course_football.png" alt=""></div>
-                <div class="lab_name">足球</div>
-                <div class="lab_time">7月</div>
-              </div>
-
-              <div class="course_lab">
-                <div class="lab_icon"><img src="../../assets/images/course_football.png" alt=""></div>
-                <div class="lab_name">足球</div>
-                <div class="lab_time">7月</div>
-              </div>
-
-              <div class="course_lab">
-                <div class="lab_icon"><img src="../../assets/images/course_football.png" alt=""></div>
-                <div class="lab_name">足球</div>
-                <div class="lab_time">7月</div>
-              </div>
-
-            </div>
-
-            <div class="course_list">
-              <div class="course_title">运动类</div>
-              <div class="course_lab">
-                <div class="lab_icon"><img src="../../assets/images/course_football.png" alt=""></div>
-                <div class="lab_name">足球</div>
-                <div class="lab_time">7月</div>
-              </div>
-            </div>
-
-            <div class="course_list">
-              <div class="course_title">运动类</div>
-              <div class="course_lab">
-                <div class="lab_icon"><img src="../../assets/images/course_football.png" alt=""></div>
-                <div class="lab_name">足球</div>
-                <div class="lab_time">7月</div>
-              </div>
-            </div>
-
-            <div class="course_list">
-              <div class="course_title">运动类</div>
-              <div class="course_lab">
-                <div class="lab_icon"><img src="../../assets/images/course_football.png" alt=""></div>
-                <div class="lab_name">足球</div>
-                <div class="lab_time">7月</div>
-              </div>
-            </div>
-
-            <div class="course_list">
-              <div class="course_title">运动类</div>
-              <div class="course_lab">
-                <div class="lab_icon"><img src="../../assets/images/course_football.png" alt=""></div>
-                <div class="lab_name">足球</div>
-                <div class="lab_time">7月</div>
-              </div>
+            <div class="course_list" v-for="(item1 , i) in courseList" :key="i">
+              <div class="lab_icon"><img :src="item1.courseImg"  alt=""></div>
+              <div class="lab_name">{{item1.courseName}}</div>
+              <div class="lab_time">{{item1.studyTime}}月</div>
             </div>
 
           </div>
 
           <div class="content_message">
-            <p>报名孩子：小羽</p>
-            <p>报名时间：7月1日</p>
+            <p>报名孩子：{{item.childrenName}}</p>
+            <p>报名时间：{{item.courseList[0].creationTime}}</p>
           </div>
 
         </div>
 
       </div>
-
 
       <div class="main_box summerCamp">
         <div class="title">
@@ -89,22 +35,22 @@
           已报名的夏令营
         </div>
 
-        <div class="main_content" v-for="(item , index) in 3" :key="index">
+        <div class="main_content" v-for="(item2 , e) in campList" :key="e">
           <div class="content_message">
             <div class="summerCamp_box">
               <div class="summerCamp_photo">
-                <img src="../../assets/images/summerCamp_photo.png" alt="">
+                <img :src="item2.campBanner" alt="">
               </div>
               <div class="summerCamp_message">
-                <div class="summerCamp_name">军事夏令营</div>
-                <div class="summerCamp_time">活动时间：7月15日-21日</div>
-                <div class="summerCamp_childName">报名孩子：小羽</div>
+                <div class="summerCamp_name">{{item2.campName}}</div>
+                <div class="summerCamp_time">活动时间：{{item2.xuexiTime}}</div>
+                <div class="summerCamp_childName">报名孩子：{{item2.childrenName}}</div>
               </div>
             </div>
-            <div class="summerCamp_price">价格：&yen;2300</div>
+            <div class="summerCamp_price">价格：&yen; {{item2.price}}</div>
           </div>
 
-          <div class="summerCamp_signUp">报名时间：7月1日</div>
+          <div class="summerCamp_signUp">报名时间：{{item2.creationTime}}</div>
         </div>
 
       </div>
@@ -123,6 +69,34 @@
     components:{
       NavTitle
     },
+    data(){
+      return{
+        childrenMessage: [], // 孩子信息
+        courseList: [],  // 课程
+        campList: [], // 夏令营
+        courseTime: '', // 订单时间
+        loading: true
+      }
+    },
+    methods: {
+      getMyCourse(){
+        this.$http.get('/parent/queryCourseAndCampList.action?id=1')
+          .then(res =>{
+            if(res.data.code === 20000){
+              this.loading = false
+              this.childrenMessage = res.data.data.courseChildrenList
+              this.childrenMessage.forEach(item => {
+                this.courseList = item.courseList
+                this.courseTime = this.courseList[0].creationTime
+              })
+              this.campList = res.data.data.campList
+            }
+          })
+      }
+    },
+    created () {
+      this.getMyCourse()
+    }
   }
 </script>
 
@@ -157,7 +131,7 @@
           background:rgba(246,85,82,1);
           box-shadow:0px -.09rem .15rem .01rem rgba(246, 82, 85, 0.35), 0px .09rem .15rem .01rem rgba(246, 82, 85, 0.35);
           border-radius: .1rem;
-          min-height: 4rem;
+          height: 4rem;
           width: 100%;
         }
 
@@ -170,28 +144,28 @@
             align-items: flex-start;
             flex-direction: column;
             text-align: center;
+            &:not(:last-child){
+              margin-bottom: 0.4rem;
+            }
             .content_box{
               display: flex;
-              justify-content: space-between;
+              flex-wrap: wrap;
+              width: 100%;
+              height: 2.9rem;
+              overflow: auto;
               .course_list{
-                &:not(:last-child){
-                  margin-right: .55rem;
+                &:not(:nth-child(5n)){
+                  margin-right: .8rem;
                 }
-                .course_title{
-                  font-size: .20rem;
-                  font-family:PingFang-SC-Bold;
-                  font-weight:bold;
-                  color:rgba(255,255,255,1);
-                  margin-bottom: .1rem;
-                }
-                .course_lab{
-                  display: flex;
-                  flex-direction: column;
-                  align-items: center;
-                  &:not(:last-child){
-                    margin-bottom: .16rem;
-                  }
-                  .lab_icon{
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                overflow-y: auto;
+                overflow-x: unset;
+                margin-bottom: .2rem;
+
+
+                .lab_icon{
                     width: .35rem;
                     height: .35rem;
                     >img{
@@ -217,7 +191,6 @@
                     font-weight:500;
                     color:rgba(246,85,82,1);
                   }
-                }
               }
             }
             .content_message{

@@ -38,7 +38,7 @@
       },
       getIndex(){
         this.$router.push({
-          path: '/',
+          path: '/home/index',
           query: {}
         });
         this.iconClick = true

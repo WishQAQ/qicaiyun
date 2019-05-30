@@ -9,33 +9,54 @@
           <p class="title_name">家长信息</p>
         </div>
 
-        <div class="parent_content">
-
+        <div class="parent_content" v-if="parentInfo">
           <div class="parent_message parent_name">
             <img src="../../assets/images/message_id.png" alt="">
-            姓名：家长姓名
+            姓名：{{this.userName}}
           </div>
-
           <div class="parent_box">
             <div class="parent_message parent_phone">
               <img src="../../assets/images/message_phone.png" alt="">
-              13212341234
+              {{this.phone}}
             </div>
             <div class="parent_message parent_phone">
               <img src="../../assets/images/message_phone.png" alt="">
-              13212341234
+              {{this.sparePhone}}
             </div>
           </div>
-
-
           <div class="parent_message parent_address">
             <img src="../../assets/images/message_address.png" alt="">
             家庭住址：重庆
           </div>
-
-          <div class="parentInfo_edit">
+          <div class="parentInfo_edit" @click="parentInfo = false">
             <img src="../../assets/images/message_edit.png" alt="">
             信息修改
+          </div>
+        </div>
+
+
+        <div class="edit_content" v-else>
+          <div class="parent_message parent_name">
+            <img src="../../assets/images/message_id.png" alt="">
+            姓名：<el-input v-model="userName"></el-input>
+          </div>
+          <div class="parent_box">
+            <div class="parent_message parent_phone">
+              <img src="../../assets/images/message_phone.png" alt="">
+              <el-input v-model="phone"></el-input>
+            </div>
+            <div class="parent_message parent_phone">
+              <img src="../../assets/images/message_phone.png" alt="">
+              <el-input v-model="sparePhone"></el-input>
+            </div>
+          </div>
+          <div class="parent_message parent_address">
+            <img src="../../assets/images/message_address.png" alt="">
+            家庭住址：<el-input v-model="address"></el-input>
+          </div>
+          <div class="parentInfo_edit" @click="addUserInfo()">
+            <img src="../../assets/images/message_edit.png" alt="">
+            保存
           </div>
 
         </div>
@@ -58,26 +79,43 @@
       return {
         userName: '',
         phone: '',
-        mobilePhone: '',
+        sparePhone: '',
         address: '',
+
+        parentInfo: true
       }
     },
     components:{
       NavTitle
     },
+    created(){
+      var userMessage = JSON.parse(localStorage.getItem('userInfo'))
+      this.userName = userMessage.nickname
+      this.phone = userMessage.phone
+      this.sparePhone = userMessage.sparePhone
+      this.address = userMessage.homeAddress
+      console.log(JSON.parse(localStorage.getItem('userInfo')));
+    },
     methods: {
-      submitMessage(){
-        console.log(this.userName);
-        console.log(this.phone);
-        console.log(this.mobilePhone);
-        console.log(this.address);
+      addUserInfo(){
+        var editUserInfo = JSON.parse(localStorage.getItem('userInfo'))
+        editUserInfo.nickname = this.userName
+        editUserInfo.phone = this.phone
+        editUserInfo.sparePhone = this.sparePhone
+        editUserInfo.homeAddress = this.address
+        localStorage.setItem('userInfo', JSON.stringify(editUserInfo));
+
+        console.log(JSON.parse(localStorage.getItem('userInfo')));
+
+        console.log(this.userName)
+        console.log(this.phone)
+        console.log(this.sparePhone)
+        console.log(this.address)
+
+        this.parentInfo = true
         this.$message({
           message: '保存成功',
           type: 'success'
-        });
-        this.$router.push({
-          path: '/home/userInfo',
-          query: {}
         });
       }
     },
@@ -108,7 +146,31 @@
           }
 
         }
-        .parent_content{
+        .edit_content{
+          /deep/.el-input{
+            .el-input__inner{
+              height: .5rem;
+              line-height: .5rem;
+              border: unset;
+            }
+          }
+          .parent_name{
+            /deep/.el-input{
+              width: 5.2rem;
+            }
+          }
+          .parent_box{
+            .parent_message{
+              width: 50%;
+            }
+          }
+          .parent_address{
+            /deep/.el-input{
+              width: 5rem;
+            }
+          }
+        }
+        .parent_content,.edit_content{
           font-size: .22rem;
           font-family:PingFang-SC-Medium;
           font-weight:500;
@@ -123,6 +185,9 @@
           .parent_box{
             display: flex;
             align-items: center;
+            .parent_message{
+              width: 50%;
+            }
           }
           .parent_name{
             margin-right: .5rem;

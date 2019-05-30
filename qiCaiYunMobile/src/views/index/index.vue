@@ -11,14 +11,15 @@
   import FooterNav from '@/components/footerNav'
   export default {
     name: "index",
-    data() {
-      return {
 
-      }
-    },
     components:{
       FooterNav
     },
+    created(){
+
+    },
+
+
     methods: {
       getCourseMenu(){
         this.$router.push({
@@ -26,8 +27,8 @@
           query: {}
         });
       },
+    },
 
-    }
   }
 </script>
 

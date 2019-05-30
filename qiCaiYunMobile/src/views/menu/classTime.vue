@@ -3,22 +3,22 @@
     <NavTitle :title="'课程时间选择'"></NavTitle>
     <div class="main">
       <div class="title">时间选择</div>
-      <div class="main_list" v-for="(item , index) in list" :key="index">
-        <img :src="item.courseImg" alt="">
-        <div class="course_name">{{item.username}}</div>
-        <el-select v-model="item.index" placeholder="请选择时间">
-          <el-option
-            v-for="list in options"
-            :key="list.value"
-            :label="list.label"
-            :value="list.value">
-          </el-option>
-        </el-select>
+      <div class="main_box">
+        <div class="main_list" v-for="(item , index) in list" :key="index">
+          <img :src="item.courseImg" alt="">
+          <div class="course_name">{{item.username}}</div>
+          <el-select v-model="item.index" placeholder="请选择时间" @change="handleChangeSelect(item.index-1)">
+            <el-option
+              v-for="list in options"
+              :key="list.value"
+              :label="list.label"
+              :value="list.value">
+            </el-option>
+          </el-select>
+
+        </div>
 
       </div>
-
-
-
     </div>
     <div class="courseSubmit" @click="getCourseSubmit()">支付</div>
 
@@ -50,13 +50,88 @@
         }, {
           value: '5',
           label: '5月'
+        },{
+          value: '6',
+          label: '6月'
+        }, {
+          value: '7',
+          label: '7月'
+        }, {
+          value: '8',
+          label: '8月'
+        }, {
+          value: '9',
+          label: '9月'
+        }, {
+          value: '10',
+          label: '10月'
+        }, {
+          value: '11',
+          label: '11月'
+        }, {
+          value: '12',
+          label: '12月'
         }],
-        value: ''
+        value: '',
+        month: '',
+
+        openId: '',
+
+        courseList: [],
+        id: '',
+        price: 300,
+        phone: '',
+        childid: '',
+        username: '',
       }
     },
     methods:{
+      handleChangeSelect(index){
+        // this.month = this.options[index].value
+        // console.log(this.options[index].value)
+        //
+        // this.list.map(item =>{
+        //   item.month = this.month;
+        // })
+
+      },
+      getCourseSubmit(){
+        console.log('支付')
+        this.courseList.push(this.list)
+
+        this.$router.push({
+          path: '/home/infoInitial',
+          query: {
+            list: this.courseList
+          }
+        });
+
+        console.log(this.courseList)
+        // let formData = new FormData();
+        // formData.append('openId', this.openId);
+        // formData.append('price', this.price);
+        // formData.append('course', this.courseList);
+        // formData.append('parentid', this.id);
+        // formData.append('parentname', this.phone);
+        // formData.append('childid', this.childid);
+        // formData.append('parentname', this.username);
+        // formData.append('openId', this.openId);
+
+        // this.$http.post('/wxPayment/wxPayCourse.action')
+        //   .then(res =>{
+        //     console.log(res)
+        //   })
+
+      }
     },
     created(){
+      // var userMessage = JSON.parse(localStorage.getItem('userInfo'))
+      // console.log(userMessage)
+      // this.openId = userMessage.wxNumber
+      // this.id = userMessage.id
+      // this.phone = userMessage.phone
+      // this.username = userMessage.nickname
+
       this.list = this.$route.query.checkCourse
     },
     watch:{
@@ -68,7 +143,7 @@
 <style scoped lang="less">
   .classTime{
     .main{
-      padding: 0 .24rem;
+      padding: .3rem .24rem 0;
       height: calc(100vh - 1.9rem);
       overflow: auto;
       .title{
@@ -78,24 +153,61 @@
         color:rgba(246,85,82,1);
         margin-bottom: .5rem;
       }
-      .main_list{
+      .main_box{
         display: flex;
         align-items: center;
-        &:not(:last-child){
-          margin-bottom: .5rem;
-        }
-        >img{
-          width: .45rem;
-          height: .45rem;
-          object-fit: contain;
-          margin-right: .1rem;
-        }
-        .course_name{
-          font-size: .22rem;
-          font-family:PingFang-SC-Medium;
-          font-weight:500;
-          color:rgba(85,85,85,1);
-          margin-right: .25rem;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        .main_list{
+          display: flex;
+          align-items: center;
+          width: 50%;
+          >img{
+            width: .4rem;
+            height: .4rem;
+            object-fit: contain;
+            margin-right: .05rem;
+          }
+          .course_name{
+            font-size: .22rem;
+            font-family:PingFang-SC-Medium;
+            font-weight:500;
+            color:rgba(85,85,85,1);
+            width: 1.2rem;
+          }
+          /deep/.el-select{
+            .el-input{
+              .el-input__inner{
+                width: 1.5rem;
+                height: .26rem;
+                line-height: .26rem;
+                border: .01rem solid rgba(153,153,153,1);
+                font-size: .14rem;
+                font-family:PingFang-SC-Medium;
+                font-weight:500;
+                color:rgba(85,85,85,.5);
+                padding-right: .3rem;
+                &::placeholder{
+                  font-size: .14rem;
+                  font-family:PingFang-SC-Medium;
+                  font-weight:500;
+                  color:rgba(85,85,85,.5);
+                }
+              }
+              .el-input__suffix{
+                right: .2rem !important;
+                .el-input__suffix-inner{
+                  .el-select__caret{
+                    font-size: .14rem !important;
+                    width: .25rem !important;
+                    line-height: .26rem !important;
+                  }
+                }
+              }
+            }
+          }
+
+
         }
       }
     }

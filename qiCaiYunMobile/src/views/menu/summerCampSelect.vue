@@ -15,7 +15,7 @@
             <p>第一期：{{item.campTime}}</p>
             <p>第二期：7月15日-19日</p>
           </div>
-          <div class="more">更多详情</div>
+          <div class="more" @click="getCampList(item)">更多详情</div>
         </div>
       </div>
     </div>
@@ -25,7 +25,22 @@
 <script>
   export default {
     name: "summerCampSelect",
-    props:['getCamp']
+    props:['getCamp'],
+    data(){
+      return{
+        num: [],
+      }
+    },
+    methods:{
+      getCampList(item){
+        this.$router.push({
+          path: '/home/summerCamp',
+          query: {
+            list: item
+          }
+        });
+      }
+    },
   }
 </script>
 

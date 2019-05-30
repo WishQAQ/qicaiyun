@@ -5,17 +5,19 @@
       <div class="myPrize_banner"></div>
       <div class="main_box">
         <div class="myPrize_title">中奖记录</div>
-        <div class="myPrize_list">
+        <div class="myPrize_list" v-for="(item , index) in prizeList" :key="index">
+          <div class="mask" v-if="item.receive !== 0"></div>
           <div class="cover">
-            <img src="../../assets/images/myPrize_cover.png" alt="">
+            <img :src="item.prizeImg" alt="">
           </div>
           <div class="message">
-            <div class="message_name">华为MATE</div>
-            <div class="message_userName">中奖名称：花飞花陌离</div>
-            <div class="message_id">中奖ID：204112145</div>
+            <div class="message_name">{{item.prizeName}}</div>
+            <div class="message_userName">用户名xxxx</div>
+<!--            <div class="message_id">中奖ID：204112145</div>-->
           </div>
 
-          <div class="getPrize">立即领取</div>
+          <div class="getPrize" v-if="item.receive === 0 && item.prizeType === 0">立即领取</div>
+
         </div>
       </div>
     </div>
@@ -29,6 +31,25 @@
     name: "myPrize",
     components:{
       NavTitle
+    },
+    data(){
+      return{
+        prizeList: []
+      }
+    },
+    methods:{
+      getMyPrize(){
+        this.$http.get('/prize/queryWtPrizeIdList.action?userId=1')
+          .then(res =>{
+            if(res.data.code === 20000){
+              this.prizeList = res.data.data.myPrizeList
+            }
+            console.log(this.prizeList)
+          })
+      }
+    },
+    created () {
+      this.getMyPrize()
     }
   }
 </script>
@@ -66,6 +87,25 @@
           position: relative;
           &:not(:last-child){
             margin-bottom: .5rem;
+          }
+          .mask{
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            position: absolute;
+            background: rgba(0,0,0,.5);
+            box-shadow:0px -.09rem .15rem .01rem rgba(0, 0, 0, 0.35), 0px .09rem .15rem .01rem rgba(0, 0, 0, 0.35);
+            border-radius: .1rem;
+            z-index: 9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            &::before{
+              content: '已使用';
+              font-size: .8rem;
+              color: #fff;
+            }
           }
           .cover{
             width: 2rem;

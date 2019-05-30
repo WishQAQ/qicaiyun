@@ -14,6 +14,7 @@
     },
     created () {
       // console.log(this.getStatus(this.$route.path))
+
     },
     watch: {
       '$route' (to, from) {

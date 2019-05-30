@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" v-loading="loading">
     <div class="lucky-wheel">
       <div class="wheel-main">
         <div class="wheel-pointer-box">
@@ -9,13 +9,13 @@
           <div class="prize-list">
             <div class="prize-item" v-for="(item,index) in prize_list" :key="index">
               <div class="prize-pic">
-                <img :src="item.icon">
+                <img :src="item.prize_img">
               </div>
-              <div class="prize-count" v-if="item.count">
-                {{item.count}}
+              <div class="prize-count">
+                {{item.prize_level}}
               </div>
               <div class="prize-type">
-                {{item.name}}
+                {{item.prize_name}}
               </div>
             </div>
           </div>
@@ -41,58 +41,60 @@
   export default {
     data() {
       return {
+        loading: true,
+
         easejoy_bean: 0,
-        lottery_ticket: 0, //抽奖次数
-        prize_list: [
+        lottery_ticket: 1, //抽奖次数
+        prize_list: [/***
           {
-            icon: "../../assets/img/bean_500.png", // 奖品图片
+            icon: Aprize, // 奖品图片
             count: '一等奖', // 奖品等级
             name: "华为P30", // 奖品名称
             isPrize: 1 // 该奖项是否为奖品
           },
           {
-            icon: "../../assets/img/bean_five.png",
+            icon: Bprize,
             count: '二等奖',
             name: "智博星学习机",
             isPrize: 1
           },
           {
-            icon: "../../assets/img/bean_one.png",
+            icon: Cprize,
             count: '三等奖',
             name: "茶具大礼包",
             isPrize: 1
           },
           {
-            icon: "../../assets/img/point_five.png",
+            icon: Dprize,
             count: '四等奖',
             name: "大礼包",
             isPrize: 1
           },
           {
-            icon: "../../assets/img/point_ten.png",
+            icon: Eprize,
             count: '五等奖',
             name: "30元优惠券",
             isPrize: 1
           },
           {
-            icon: "../../assets/img/bean_500.png",
+            icon: Fprize,
             count: '纪念奖',
             name: "10元优惠券",
             isPrize: 1
           },
           {
-            icon: "../../assets/img/give_up.png",
+            icon: Gprize,
             count: '鼓励奖',
             name: "小礼包",
             isPrize: 0
           },
           {
-            icon: "../../assets/img/bean_500.png",
+            icon: Hprize,
             count: '参与奖',
             name: "小礼包",
             isPrize: 1
           }
-        ], //奖品列表
+           */], //奖品列表
         toast_control: false, //抽奖结果弹出框控制器
         hasPrize: false, //是否中奖
         start_rotating_degree: 0, //初始旋转角度
@@ -111,7 +113,7 @@
     computed: {
       toast_title() {
         return this.hasPrize
-          ? "恭喜您，获得 " +this.prize_list[this.index].count + ' ' + this.prize_list[this.index].name
+          ? "恭喜您，获得 " +this.prize_list[this.index].prize_level + ' ' + this.prize_list[this.index].prize_name
           : "";
       },
       toast_pictrue() {
@@ -122,9 +124,17 @@
     },
     methods: {
       //此方法为处理奖品数据
-      init_prize_list(list) {},
+      init_prize_list(list) {
+        this.$http.get('/prize/queryPrizeList.action')
+          .then(res=>{
+            if(res.code = 20000){
+              this.loading = false
+              this.prize_list = res.data.data.prizeList
+            }
+          })
+      },
       rotate_handle() {
-        this.index = 1 //指定每次旋转到的奖品下标
+        this.index = 3 || 2 || 0 //指定每次旋转到的奖品下标
         this.rotating();
       },
       rotating() {
@@ -159,17 +169,36 @@
         }
       },
       game_over() {
-        this.toast_control = true;
         this.hasPrize = this.prize_list[this.index].isPrize
+        console.log(this.prize_list[this.index].id)
+
+
+        let formData = new FormData();
+
+        formData.append('userId', 1);
+        formData.append('prizeId', this.prize_list[this.index].id);
+
+        this.$http.post("/prize/addWtPrize.action",formData)
+          .then(res =>{
+          if(res.data.code === 20000){
+            this.toast_control = true;
+          }
+        })
+
       },
       //关闭弹窗
       close_toast() {
         this.toast_control = false;
+
+        this.$router.push({
+          path: '/home/index',
+          query: {}
+        });
       }
     }
   };
 </script>
-<style scoped>
+<style scoped lang="less">
   .container {
     width: 100%;
     height: 100vh;
@@ -178,7 +207,7 @@
   .lucky-wheel {
     height: 100%;
     width: 100%;
-    background: rgb(252, 207, 133) url("/static/images/wheel_background.png") no-repeat
+    background: url("../../assets/images/wheel_background.png") no-repeat
     top center;
     background-size: cover;
   }
@@ -190,10 +219,10 @@
     top: 5rem;
   }
   .wheel-bg {
-    width: 6rem;
-    height: 6rem;
-    background: url("/static/img/draw_wheel.png") no-repeat center top;
-    background-size: 100%;
+    width: 6.44rem;
+    height: 6.44rem;
+    background: url("../../assets/images/luckWheel_turntable.png") no-repeat center center;
+    background-size: contain;
     color: #fff;
     font-weight: 500;
     display: flex;
@@ -206,16 +235,15 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    z-index: 100;
-    transform: translate(-50%, -60%);
-    width: 3rem;
-    height: 3rem;
+    transform: translate(-50%, -50%);
+    width: 2.38rem;
+    height: 2.38rem;
   }
   .wheel-pointer {
-    width: 3rem;
-    height: 3rem;
-    background: url("/static/img/draw_btn.png") no-repeat center top;
-    background-size: 100%;
+    width: 2.38rem;
+    height: 2.38rem;
+    background: url("../../assets/images/luckWheel_pointer.png") no-repeat center center;
+    background-size: contain;
     transform-origin: center 60%;
   }
   .wheel-bg div {
@@ -230,47 +258,49 @@
     position: absolute;
     top: 0;
     left: 0;
-    z-index: 2;
+    font-family:PingFang-SC-Medium;
+    color:rgba(224,40,41,1);
+    font-weight:500;
   }
   .prize-list .prize-item:first-child {
-    top: .3rem;
-    left: 3.2rem;
+    top: 0.5rem;
+    left: 3.4rem;
     transform: rotate(20deg);
   }
   .prize-list .prize-item:nth-child(2) {
-    top: 1.4rem;
-    left: 4.2rem;
+    top: 1.5rem;
+    left: 4.4rem;
     transform: rotate(67deg);
   }
   .prize-list .prize-item:nth-child(3) {
-    top: 2.6rem;
-    left: 4.2rem;
+    top: 2.9rem;
+    left: 4.4rem;
     transform: rotate(-250deg);
   }
   .prize-list .prize-item:nth-child(4) {
-    top: 3.6rem;
-    left: 3.3rem;
+    top: 3.8rem;
+    left: 3.4rem;
     transform: rotate(-210deg);
   }
   .prize-list .prize-item:nth-child(5) {
-    top: 3.6rem;
-    left: 1.85rem;
-    transform: rotate(-160deg);
+    top: 3.9rem;
+    left: 2.1rem;
+    transform: rotate(-159deg);
   }
   .prize-list .prize-item:nth-child(6) {
-    top: 2.7rem;
-    left: .9rem;
-    transform: rotate(-111deg);
+    top: 3rem;
+    left: 1.1rem;
+    transform: rotate(-116deg);
   }
   .prize-list .prize-item:nth-child(7) {
-    top: 1.4rem;
-    left: 1.2rem;
-    transform: rotate(-69deg);
+    top: 1.6rem;
+    left: 1.1rem;
+    transform: rotate(-70deg);
   }
   .prize-list .prize-item:nth-child(8) {
-    top: .3rem;
-    left: 1.8rem;
-    transform: rotate(-20deg);
+    top: 0.5rem;
+    left: 2rem;
+    transform: rotate(-26deg);
   }
   .prize-item {
     width: 1rem;
@@ -283,10 +313,10 @@
     margin-top: .2rem;
   }
   .prize-count {
-    font-size: 0.2rem;
+    font-size: .2rem;
   }
   .prize-type {
-    font-size: .16rem;
+    font-size: .14rem;
   }
   .toast-mask {
     position: fixed;

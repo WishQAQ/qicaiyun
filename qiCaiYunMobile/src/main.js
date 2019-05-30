@@ -12,7 +12,10 @@ import apiConfig from '../config/api.config'
 import Axios from 'axios'
 import VueAxios from 'vue-axios'
 
-Vue.use(VueAxios, Axios)
+
+import qs from 'qs'
+
+Vue.use(VueAxios, Axios ,qs)
 Axios.defaults.baseURL = 'api'
 Axios.defaults.baseURL = apiConfig.baseUrl
 
@@ -26,3 +29,6 @@ new Vue({
   components: { App },
   template: '<App/>'
 })
+
+
+

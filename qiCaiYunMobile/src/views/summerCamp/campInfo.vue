@@ -1,6 +1,6 @@
 <template>
   <div class="parentInfoInitial">
-    <NavTitle :title="'家长基本信息'"></NavTitle>
+    <NavTitle :title="'基本信息'"></NavTitle>
     <!--家长信息-未收录-->
     <div class="main" v-if="firstMessage">
       <div class="title"><p>家长基本信息</p></div>
@@ -114,6 +114,35 @@
           ></el-input>
         </div>
 
+
+        <div class="jiankang">
+          <div>
+            <span>孩子身体是否健康？</span>
+            <span>
+              <el-radio v-model="health" label="是">备选项</el-radio>
+              <el-radio v-model="health" label="否">备选项</el-radio>
+
+            </span>
+          </div>
+
+          <div class="jiankangInput">
+            <el-input v-model="conditions"></el-input>
+          </div>
+        </div>
+
+        <div class="why">
+          <div>孩子为什么选择夏令营</div>
+          <el-input v-model="whychoosecamp"></el-input>
+        </div>
+
+        <div class="campTime">
+          <el-radio v-model="health" label="是">是</el-radio>
+          <el-radio v-model="health" label="否">否</el-radio>
+        </div>
+
+
+
+
         <el-button @click="submitMessage" type="submit" class="submit">支付</el-button>
       </form>
 
@@ -125,8 +154,7 @@
 
 <script>
   import wx from "weixin-js-sdk";
-  // import wx from require('weixin-js-sdk');
-  // import { config } from 'weixin-js-sdk';
+
   import NavTitle from '@/components/navTitle'
 
   export default {
@@ -135,24 +163,28 @@
       return {
         firstMessage: true,
 
-        userName: '',
-        phone: '',
-        mobilePhone: '',
-        address: '',
-
-        childName: '',
-        childAge: '',
-        childSex: '1',
-        childId: '', // 孩子身份证
-        school: '',
+        campTimeRadio: '',
 
         openId: '',
-        price: 1,
-        userId: '',
-        sparephone: '',
-        childID:  '', // 孩子ID
-
+        campid: '',  // 已选夏令营
+        price: '',  // 金额
+        userId: '', // 家长ID
+        userName: '',  // 家长名称
+        childID: '',  //孩子ID
+        phone: '',  // 电话
+        sparephone: '', // 备用电话
+        childName: '',  // 孩子姓名
+        childAge: '',  // 孩子年龄
+        childSex: 1,  // 孩子性别
+        childId: '', // 孩子身份证
+        school: '', // 孩子学校
+        address: '', //家庭地址
+        camptime: '2019/1/1', //夏令营学习时间
         wtId: '', // 奖券ID
+
+        whychoosecamp: '',  // 孩子为什么选择夏令营
+        health: '',  // 是否健康
+        conditions: '',//有无遗传病
 
         packageId: '', //微信支付
       }
@@ -168,8 +200,7 @@
         let formData = new FormData();
         formData.append('openid', this.openId);
         formData.append('price', this.price); // 价钱
-        formData.append('course', JSON.stringify(this.$route.query.list[0]));  // 课程
-        console.log(this.$route.query.list)
+        formData.append('campid', this.campid);  // 已选夏令营
         formData.append('parentid', this.userId);  // 用户ID
         formData.append('parentname', this.userName);   // 用户名称
         formData.append('childid', this.childID);  // 孩子ID
@@ -181,79 +212,40 @@
         formData.append('idcard', this.childId);  // 孩子身份证
         formData.append('school', this.school);   // 孩子学校
         formData.append('address', this.address);  // 家庭地址
+        formData.append('camptime', this.camptime);  // 夏令营学习时间
         formData.append('wt_id', this.wtId);  // 奖券ID
 
-        this.$http.post('/wxPayment/wxPayCourse.action',formData)
-          .then(res =>{
-            this.packageId = res.data.data.package
+        formData.append('whychoosecamp', this.whychoosecamp);
+        formData.append('health', this.health);
+        formData.append('conditions', this.conditions);
+
+        this.$http.post('/wxPayment/wxPayCamp.action',formData)
+          .then(res=>{
+            console.log(res)
             if(res.data.code === 20000) {
               var wxList = res.data.data
 
-                WeixinJSBridge.invoke(
-                  'getBrandWCPayRequest', {
-                    "appId":wxList.appid,     //公众号名称，由商户传入
-                    "timeStamp":wxList.timeStamp,         //时间戳，自1970年以来的秒数
-                    "nonceStr": wxList.nonceStr, //随机串
-                    "package": wxList.package,
-                    "signType":"MD5",         //微信签名方式：
-                    "paySign":wxList.paySign //微信签名
-                  },
-                  function(res){
-                    console.log(res)
-                    if(res.err_msg == "get_brand_wcpay_request:ok" ){
-                      // 使用以上方式判断前端返回,微信团队郑重提示：
-                      //res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
-                      alert('支付成功')
+              WeixinJSBridge.invoke(
+                'getBrandWCPayRequest', {
+                  "appId":wxList.appid,     //公众号名称，由商户传入
+                  "timeStamp":wxList.timeStamp,         //时间戳，自1970年以来的秒数
+                  "nonceStr": wxList.nonceStr, //随机串
+                  "package": wxList.package,
+                  "signType":"MD5",         //微信签名方式：
+                  "paySign":wxList.paySign //微信签名
+                },
+                function(res){
+                  console.log(res)
+                  if(res.err_msg == "get_brand_wcpay_request:ok" ){
+                    // 使用以上方式判断前端返回,微信团队郑重提示：
+                    //res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
+                    alert('支付成功')
 
-                    }
-                  });
-              // if (typeof WeixinJSBridge == "undefined"){
-              //   if( document.addEventListener ){
-              //     document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
-              //   }else if (document.attachEvent){
-              //     document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
-              //     document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
-              //   }
-              // }else{
-              //   onBridgeReady();
-              // }
-
-
-/***
-              wx.config({
-                debug:true,
-                appId: wxList.appid,
-                timeStamp:  wxList.timeStamp,
-                nonceStr: wxList.nonceStr,
-                package: wxList.package,
-                signType: "MD5",
-                paySign: wxList.paySign,
-                // jsApiList: chooseWXPay,
-              });
-              //微信支付
-              wx.ready(function() {
-                // console.log(this.jsApiCall());
-                wx.chooseWXPay({
-                  timestamp: wxList.timeStamp,
-                  nonceStr:wxList.nonceStr,
-                  package: wxList.package,
-                  signType: 'MD5',
-                  paySign: wxList.paySign,
-                  success: function () {
-                    // 支付成功后的回调函数
-                    alert("支付成功");
-
-                  },
-                  cancel: function() {
-                    alert("支付失败");
                   }
                 });
-              }.bind(this));
-
-*/
             }
-          })
 
+          })
 
         this.$message({
           message: '保存成功',
@@ -261,42 +253,21 @@
         });
       },
 
-
-
-      // appid
-      //   :
-      //   "wx93702596c4a16d03"
-      // nonceStr
-      //   :
-      //   "xisa3a7mm6wotm3pb350g8jqhobmi3x5"
-      // package
-      //   :
-      //   "prepay_id=wx3023060704103305b0e2df210966194700"
-      // paySign
-      //   :
-      //   "44C9930F4FC57E5CEA369F7744183577"
-      // timeStamp
-      //   :
-      //   "1559228764"
-
-
-
-
-
-
     },
     created() {
+      var camp = this.$route.query.list
+      console.log(this.$route.query.list)
       var userMessage = JSON.parse(localStorage.getItem('userInfo'))
+      console.log(userMessage)
       this.openId = userMessage.wxNumber
-
-      this.userId = userMessage.id
+      this.userName = userMessage.username
       this.phone = userMessage.phone
-      this.sparephone = userMessage.sparephone
-      this.username = userMessage.nickname
-      this.address = userMessage.homeAddress
+      this.userId = userMessage.id
 
-      console.log(this.$route.query.list[0])
-      console.log(JSON.stringify(this.$route.query.list[0]))
+      this.sparePhone = userMessage.sparePhone
+      this.camptime = camp.campTime
+      this.price = camp.price
+      this.campid = camp.campId
 
     }
   }
@@ -305,7 +276,9 @@
 <style scoped lang="less">
   .parentInfoInitial{
     .main{
-      padding: .3rem .48rem;
+      padding: .3rem .48rem .5rem;
+      height: calc(100vh - 1.9rem);
+      overflow: auto;
       .title{
         display: flex;
         align-items: center;

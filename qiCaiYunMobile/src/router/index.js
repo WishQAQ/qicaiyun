@@ -6,6 +6,8 @@ Vue.use(Router)
 
 const Home = () => import('@/Home')
 
+const Auth = () => import('@/auth')
+
 // 个人中心
 const UserInfo = () => import('@/views/userInfo/userInfo')
 // 信息初始化
@@ -29,20 +31,27 @@ const SummerCamp = () => import('@/views/summerCamp/summerCamp')
 // 课程时间选择
 const ClassTime = () => import('@/views/menu/classTime')
 
+const CampInfo = () => import('@/views/summerCamp/campInfo')
+
 const router = new Router({
   // mode: 'history',
   routes: [
     {
       path: '/',
-      redirect: '/home/index'
+      redirect: '/auth'
     },
     {
       path: '/home',
-      redirect: '/home/index'
+      redirect: '/auth'
     },
     {
       path: '/index',
-      redirect: '/home/index'
+      redirect: '/auth'
+    },
+    {
+      path: '/auth',
+      name: 'Auth',
+      component: Auth
     },
     {
       path: '/home',
@@ -106,10 +115,20 @@ const router = new Router({
         path: '/home/summerCamp',
         name: 'SummerCamp',
         component: SummerCamp
+      },{
+        // 夏令营支付
+        path: '/home/campInfo',
+        name: 'CampInfo',
+        component: CampInfo
       }]
     }]
 });
 
+// router.beforeEach(() => {
+//   window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx93702596c4a16d03&redirect_uri=http%3a%2f%2fqcy-web.mynatapp.cc%2f%23%2fauth&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect';
+//
+// });
+//
 // router.beforeEach(( to, from, next ) => {
 //   if (to.name != 'auth') {//判断当前是否是新建的auth路由空白页面
 //     let _token = sessionStorage.getItem('wechataccess_token');
@@ -117,13 +136,15 @@ const router = new Router({
 //       //保存当前路由地址，授权后还会跳到此地址
 //       sessionStorage.setItem('beforeUrl', to.fullPath);
 //       //授权请求,并跳转http://m.water.ui-tech.cn/auth路由页面
-//       window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx93702596c4a16d03&redirect_uri=URL%2Fauth&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect';
+//       window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx93702596c4a16d03&redirect_uri=http%3A%2F%2Fqcy-web.mynatapp.cc%2Fauth.html&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect';
 //     } else {
 //       next();
 //     }
 //   } else {
 //     next();
 //   }
-// });
+// })
 
 export default router;
+
+// window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx93702596c4a16d03&redirect_uri=http%3a%2f%2fqcy.mynatapp.cc%2fnumberone_auth_war_exploded%2flogin%2fgetcode.action&response_type=code&scope=snsapi_userinfo&connect_redirect=1#wechat_redirect';

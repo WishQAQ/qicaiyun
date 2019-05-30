@@ -27,10 +27,10 @@
             <div class="title"><img src="../../assets/images/userInfo_child.png" alt="">孩子信息</div>
             <div class="getUrl"></div>
           </div>
-          <div class="message_box" @click="getMessageBoard()">
-            <div class="title"><img src="../../assets/images/userInfo_message.png" alt="">留言</div>
-            <div class="getUrl"></div>
-          </div>
+<!--          <div class="message_box" @click="getMessageBoard()">-->
+<!--            <div class="title"><img src="../../assets/images/userInfo_message.png" alt="">留言</div>-->
+<!--            <div class="getUrl"></div>-->
+<!--          </div>-->
 
         </div>
 
@@ -51,10 +51,16 @@
     },
     data(){
       return{
-        avatar: '../../assets/images/avatar.png',
-        userName: '用户名测试',
+        avatar: '',
+        userName: '',
 
       }
+    },
+    created(){
+      var userMessage = JSON.parse(localStorage.getItem('userInfo'))
+      this.avatar = userMessage.headimg
+      this.userName = userMessage.nickname
+      console.log(this.avatar)
     },
     methods:{
       getMyCourse(){
@@ -67,7 +73,7 @@
       getMyPrize(){
         // 我的奖品
         this.$router.push({
-          path: '/home/luckyWheel',
+          path: '/home/myPrize',
           query: {}
         });
       },
