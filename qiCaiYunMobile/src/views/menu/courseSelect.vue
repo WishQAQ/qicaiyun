@@ -6,7 +6,7 @@
       </div>
       <div class="more_button" @click="openMore()"></div>
       <div class="more_box" v-if="moreBox">
-<!--   123123    -->
+        <div v-for="(i , e) in courseList" v-bind:class="{ active:e == isActive }" @click="clickMenuListMore(e)"  :key="e">{{i.courseTypeName}}</div>
       </div>
     </div>
 
@@ -48,6 +48,11 @@
     methods:{
       clickMenuList(index){
         this.isActive = index;
+        this.courseName = this.courseList[this.isActive].courseList;
+      },
+      clickMenuListMore(e){
+        this.isActive = e;
+        this.moreBox = false
         this.courseName = this.courseList[this.isActive].courseList;
       },
       handleCheckChange(){
@@ -125,8 +130,15 @@
         position: absolute;
         top: .5rem;
         width: 100%;
-        height: 4rem;
-        background: red;
+        padding: .3rem .2rem 0;
+        background: #fff;
+        z-index: 1;
+        display: flex;
+        flex-wrap: wrap;
+        >div{
+          margin-right: .3rem;
+          margin-bottom: .3rem;
+        }
       }
     }
     .list_box{

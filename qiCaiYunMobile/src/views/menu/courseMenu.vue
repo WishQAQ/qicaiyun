@@ -28,7 +28,7 @@
 
     </div>
 
-    <div v-if="menuClick" class="courseMenuSubmit" @click="getCourseSubmit()">确定</div>
+    <div v-if="menuClick ===1" class="courseMenuSubmit" @click="getCourseSubmit()">确定</div>
 
   </div>
 </template>

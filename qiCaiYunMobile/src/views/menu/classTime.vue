@@ -7,7 +7,7 @@
         <div class="main_list" v-for="(item , index) in list" :key="index">
           <img :src="item.courseImg" alt="">
           <div class="course_name">{{item.username}}</div>
-          <el-select v-model="item.index" placeholder="请选择时间" @change="handleChangeSelect(item.index-1)">
+          <el-select v-model="item.index" placeholder="请选择时间" @change="handleChangeSelect(options,item.index-1)">
             <el-option
               v-for="list in options"
               :key="list.value"
@@ -20,7 +20,7 @@
 
       </div>
     </div>
-    <div class="courseSubmit" @click="getCourseSubmit()">支付</div>
+    <div class="courseSubmit" @click="getCourseSubmit()">确认</div>
 
   </div>
 </template>
@@ -86,17 +86,11 @@
       }
     },
     methods:{
-      handleChangeSelect(index){
-        // this.month = this.options[index].value
-        // console.log(this.options[index].value)
-        //
-        // this.list.map(item =>{
-        //   item.month = this.month;
-        // })
-
+      handleChangeSelect(index,options){
+        // // this.month = this.options[index].value
+        // console.log(options)
       },
       getCourseSubmit(){
-        console.log('支付')
         this.courseList.push(this.list)
 
         this.$router.push({
@@ -107,36 +101,12 @@
         });
 
         console.log(this.courseList)
-        // let formData = new FormData();
-        // formData.append('openId', this.openId);
-        // formData.append('price', this.price);
-        // formData.append('course', this.courseList);
-        // formData.append('parentid', this.id);
-        // formData.append('parentname', this.phone);
-        // formData.append('childid', this.childid);
-        // formData.append('parentname', this.username);
-        // formData.append('openId', this.openId);
-
-        // this.$http.post('/wxPayment/wxPayCourse.action')
-        //   .then(res =>{
-        //     console.log(res)
-        //   })
 
       }
     },
     created(){
-      // var userMessage = JSON.parse(localStorage.getItem('userInfo'))
-      // console.log(userMessage)
-      // this.openId = userMessage.wxNumber
-      // this.id = userMessage.id
-      // this.phone = userMessage.phone
-      // this.username = userMessage.nickname
-
       this.list = this.$route.query.checkCourse
     },
-    watch:{
-
-    }
   }
 </script>
 

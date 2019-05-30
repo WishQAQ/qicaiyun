@@ -26,7 +26,7 @@
           </div>
           <div class="parent_message parent_address">
             <img src="../../assets/images/message_address.png" alt="">
-            家庭住址：重庆
+            家庭住址：{{this.address}}
           </div>
           <div class="parentInfo_edit" @click="parentInfo = false">
             <img src="../../assets/images/message_edit.png" alt="">
@@ -36,28 +36,32 @@
 
 
         <div class="edit_content" v-else>
-          <div class="parent_message parent_name">
-            <img src="../../assets/images/message_id.png" alt="">
-            姓名：<el-input v-model="userName"></el-input>
-          </div>
-          <div class="parent_box">
-            <div class="parent_message parent_phone">
-              <img src="../../assets/images/message_phone.png" alt="">
-              <el-input v-model="phone"></el-input>
+          <el-form>
+            <div class="parent_message parent_name">
+              <img src="../../assets/images/message_id.png" alt="">
+              姓名：<el-input v-model="userName"></el-input>
             </div>
-            <div class="parent_message parent_phone">
-              <img src="../../assets/images/message_phone.png" alt="">
-              <el-input v-model="sparePhone"></el-input>
+            <div class="parent_box">
+              <div class="parent_message parent_phone">
+                <img src="../../assets/images/message_phone.png" alt="">
+                <el-input v-model="phone"></el-input>
+              </div>
+              <div class="parent_message parent_phone">
+                <img src="../../assets/images/message_phone.png" alt="">
+                <el-input v-model="sparePhone"></el-input>
+              </div>
             </div>
-          </div>
-          <div class="parent_message parent_address">
-            <img src="../../assets/images/message_address.png" alt="">
-            家庭住址：<el-input v-model="address"></el-input>
-          </div>
-          <div class="parentInfo_edit" @click="addUserInfo()">
-            <img src="../../assets/images/message_edit.png" alt="">
-            保存
-          </div>
+            <div class="parent_message parent_address">
+              <img src="../../assets/images/message_address.png" alt="">
+              家庭住址：<el-input v-model="address"></el-input>
+            </div>
+            <div class="parentInfo_edit" @click="addUserInfo()">
+              <img src="../../assets/images/message_edit.png" alt="">
+              保存
+            </div>
+
+          </el-form>
+
 
         </div>
 
@@ -82,7 +86,7 @@
         sparePhone: '',
         address: '',
 
-        parentInfo: true
+        parentInfo: false
       }
     },
     components:{

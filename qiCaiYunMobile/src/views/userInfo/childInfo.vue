@@ -98,6 +98,7 @@
           userAge: '',
           userId: '',
           userShcool: '',
+          userID: '',
         }
       }
     },
@@ -138,7 +139,7 @@
           })
       },
       getChildInfo(){
-        this.$http.get('/children/queryChildrenAndUserById.action?userId=1')
+        this.$http.get('/children/queryChildrenAndUserById.action?userId='+this.userID)
           .then(res =>{
             if(res.data.code === 20000){
               this.loading = false
@@ -149,6 +150,8 @@
       }
     },
     mounted() {
+      var userMessage = JSON.parse(localStorage.getItem('userInfo'))
+      this.userID = userMessage.id
       this.getChildInfo()
     }
   }

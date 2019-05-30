@@ -12,7 +12,7 @@
           </div>
           <div class="message">
             <div class="message_name">{{item.prizeName}}</div>
-            <div class="message_userName">用户名xxxx</div>
+            <div class="message_userName">{{item.userName }}</div>
 <!--            <div class="message_id">中奖ID：204112145</div>-->
           </div>
 
@@ -34,21 +34,28 @@
     },
     data(){
       return{
-        prizeList: []
+        prizeList: [],
+        userName: '',
+        userId: ''
       }
     },
     methods:{
       getMyPrize(){
-        this.$http.get('/prize/queryWtPrizeIdList.action?userId=1')
+        this.$http.get('/prize/queryWtPrizeIdList.action?userId='+this.userId)
           .then(res =>{
             if(res.data.code === 20000){
               this.prizeList = res.data.data.myPrizeList
+
+
             }
             console.log(this.prizeList)
           })
       }
     },
     created () {
+      var userMessage = JSON.parse(localStorage.getItem('userInfo'))
+      this.userId = userMessage.id
+      this.userName = userMessage.nickname
       this.getMyPrize()
     }
   }

@@ -49,6 +49,9 @@
       width: 100%;
       height: calc(100vh - 1.9rem);
       overflow: auto;
+      >img{
+        width: 100%;
+      }
     }
     .submit{
       z-index: 99;

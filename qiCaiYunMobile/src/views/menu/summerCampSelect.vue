@@ -12,8 +12,8 @@
         </div>
         <div class="message_box">
           <div class="time">
-            <p>第一期：{{item.campTime}}</p>
-            <p>第二期：7月15日-19日</p>
+            <p>第一期：{{item.campTime.split(',')[0]}}</p>
+            <p>第二期：{{item.campTime.split(',')[1]}}</p>
           </div>
           <div class="more" @click="getCampList(item)">更多详情</div>
         </div>
@@ -99,7 +99,7 @@
         }
       }
       .message{
-        width: 3.23rem;
+        width: 3.53rem;
         height: 2.09rem;
         display: flex;
         flex-direction: column;

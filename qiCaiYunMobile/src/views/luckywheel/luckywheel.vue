@@ -1,6 +1,11 @@
 <template>
   <div class="container" v-loading="loading">
     <div class="lucky-wheel">
+
+      <div class="zhongjiangList">
+        <p>恭喜 刘伟 中三等奖：茶具大礼包</p>
+      </div>
+
       <div class="wheel-main">
         <div class="wheel-pointer-box">
           <div class="wheel-pointer" @click="rotate_handle()" :style="{transform:rotate_angle_pointer,transition:rotate_transition_pointer}"></div>
@@ -21,13 +26,59 @@
           </div>
         </div>
       </div>
+
+      <div class="zhongjiangJilu"><img src="../../assets/images/award_record.png" alt=""></div>
+
+      <div class="zhongjiang_box">
+        <p class="box_title">
+          <span>用户名</span>
+          <span>中奖时间</span>
+          <span>奖品</span>
+        </p>
+        <div class="box_list">
+          <p>
+            <span>王静</span>
+            <span>6月1日</span>
+            <span>茶具大礼包</span>
+          </p>
+          <p>
+            <span>李娜</span>
+            <span>6月1日</span>
+            <span>30优惠劵</span>
+          </p>
+          <p>
+            <span>王芳</span>
+            <span>6月1日</span>
+            <span>10元优惠劵</span>
+          </p>
+          <p>
+            <span>张伟</span>
+            <span>5月31日</span>
+            <span>智博星学习机</span>
+          </p>
+          <p>
+            <span>李静</span>
+            <span>5月31日</span>
+            <span>小礼包</span>
+          </p>
+          <p>
+            <span>王秀英</span>
+            <span>5月31日</span>
+            <span>5元优惠券</span>
+          </p>
+
+        </div>
+      </div>
+
     </div>
     <div class="toast" v-show="toast_control">
       <div class="toast-container">
-        <img :src="toast_pictrue" class="toast-picture">
         <div class="close" @click="close_toast()"></div>
         <div class="toast-title">
-          {{toast_title}}
+          <p>恭喜你！获得：</p>
+          <p>{{this.level}}</p>
+          <p>{{this.levelName}}</p>
+          <p>请前往我的奖品领取奖励</p>
         </div>
         <div class="toast-btn">
           <div class="toast-cancel"  @click="close_toast">关闭</div>
@@ -45,56 +96,7 @@
 
         easejoy_bean: 0,
         lottery_ticket: 1, //抽奖次数
-        prize_list: [/***
-          {
-            icon: Aprize, // 奖品图片
-            count: '一等奖', // 奖品等级
-            name: "华为P30", // 奖品名称
-            isPrize: 1 // 该奖项是否为奖品
-          },
-          {
-            icon: Bprize,
-            count: '二等奖',
-            name: "智博星学习机",
-            isPrize: 1
-          },
-          {
-            icon: Cprize,
-            count: '三等奖',
-            name: "茶具大礼包",
-            isPrize: 1
-          },
-          {
-            icon: Dprize,
-            count: '四等奖',
-            name: "大礼包",
-            isPrize: 1
-          },
-          {
-            icon: Eprize,
-            count: '五等奖',
-            name: "30元优惠券",
-            isPrize: 1
-          },
-          {
-            icon: Fprize,
-            count: '纪念奖',
-            name: "10元优惠券",
-            isPrize: 1
-          },
-          {
-            icon: Gprize,
-            count: '鼓励奖',
-            name: "小礼包",
-            isPrize: 0
-          },
-          {
-            icon: Hprize,
-            count: '参与奖',
-            name: "小礼包",
-            isPrize: 1
-          }
-           */], //奖品列表
+        prize_list: [], //奖品列表
         toast_control: false, //抽奖结果弹出框控制器
         hasPrize: false, //是否中奖
         start_rotating_degree: 0, //初始旋转角度
@@ -104,11 +106,19 @@
         rotate_transition: "transform 6s ease-in-out", //初始化选中的过度属性控制
         rotate_transition_pointer: "transform 12s ease-in-out", //初始化指针过度属性控制
         click_flag: true, //是否可以旋转抽奖
-        index: 0
+        index: 0,
+
+        userId: '',
+
+        level: '',
+        levelName: ''
       };
     },
     created() {
       this.init_prize_list();
+      var userMessage = JSON.parse(localStorage.getItem('userInfo'))
+      this.userId = userMessage.id
+      this.userName = userMessage.nickname
     },
     computed: {
       toast_title() {
@@ -130,11 +140,14 @@
             if(res.code = 20000){
               this.loading = false
               this.prize_list = res.data.data.prizeList
+
+              this.level = this.prize_list[this.index].prize_level
+              this.levelName = this.prize_list[this.index].prize_name
             }
           })
       },
       rotate_handle() {
-        this.index = 3 || 2 || 0 //指定每次旋转到的奖品下标
+        this.index = 6 || 2 || 0 //指定每次旋转到的奖品下标
         this.rotating();
       },
       rotating() {
@@ -175,7 +188,7 @@
 
         let formData = new FormData();
 
-        formData.append('userId', 1);
+        formData.append('userId', this.userId);
         formData.append('prizeId', this.prize_list[this.index].id);
 
         this.$http.post("/prize/addWtPrize.action",formData)
@@ -191,37 +204,64 @@
         this.toast_control = false;
 
         this.$router.push({
-          path: '/home/index',
+          path: '/home/userInfo',
           query: {}
         });
       }
-    }
+    },
   };
 </script>
 <style scoped lang="less">
   .container {
     width: 100%;
-    height: 100vh;
+    height: calc(100vh - .9rem);
     overflow: auto;
+    background: #E02829;
   }
   .lucky-wheel {
-    height: 100%;
     width: 100%;
     background: url("../../assets/images/wheel_background.png") no-repeat
     top center;
     background-size: cover;
+    padding-top: 4rem;
+    padding-bottom: 2rem;
+
+    .zhongjiangList{
+      width:6rem;
+      height: .4rem;
+      background:rgba(255,255,255,.2);
+      border-radius: .2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      margin:  0 auto .5rem;
+      font-size: .2rem;
+      font-family:PingFang-SC-Medium;
+      font-weight:500;
+      color:rgba(255,255,255,1);
+      &::before{
+        content: '';
+        background: url("../../assets/images/xiaolaba.png") no-repeat center center;
+        background-size: contain;
+        width: .26rem;
+        height: .26rem;
+        position: absolute;
+        left: .5rem;
+      }
+    }
+
   }
   .wheel-main {
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
-    top: 5rem;
   }
   .wheel-bg {
     width: 6.44rem;
     height: 6.44rem;
-    background: url("../../assets/images/luckWheel_turntable.png") no-repeat center center;
+    background: url("../../assets/images/draw_wheel.png") no-repeat center center;
     background-size: contain;
     color: #fff;
     font-weight: 500;
@@ -235,9 +275,10 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -62%);
     width: 2.38rem;
     height: 2.38rem;
+    z-index: 1;
   }
   .wheel-pointer {
     width: 2.38rem;
@@ -327,6 +368,79 @@
     width: 100%;
     height: 100%;
   }
+
+  .zhongjiangJilu{
+    width:2.24rem;
+    height:.5rem;
+    background:rgba(255,200,118,.2);
+    border-radius:.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: .55rem auto .16rem;
+    >img{
+      width: 2.24rem;
+      height: 100%;
+      background:rgba(255,201,118,1);
+      border-radius: .1rem;
+      object-fit: contain;
+    }
+  }
+
+
+  .zhongjiang_box{
+    width: 5rem;
+    height:2.9rem;
+    border: .02rem solid rgba(255,255,255,1);
+    border-radius: .1rem;
+    margin: 0 auto;
+    padding: .22rem 0;
+    .box_title{
+      width: 100%;
+      height: .3rem;
+      background:rgba(255,255,255,1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 .26rem;
+      font-size: .2rem;
+      font-family:HYShangWeiShouShuW-Regular;
+      font-weight:400;
+      color:rgba(224,41,41,1);
+    }
+    .box_list{
+      font-size: .14rem;
+      font-family:PingFang-SC-Regular;
+      font-weight:400;
+      color:rgba(248,248,248,1);
+      >p{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: .07rem .16rem;
+        >span{
+          width: 30%;
+          display: inline-flex;
+          justify-content: center;
+          &:first-child::before{
+            display: inline-flex;
+            align-items: center;
+            content: '';
+            width: .2rem;
+            height: .2rem;
+            background:rgba(255,255,255,1);
+            border-radius:50%;
+            margin-right: .15rem;
+          }
+        }
+        &:not(:first-child){
+          border-bottom: .01rem solid rgba(255,255,255,1);
+        }
+      }
+    }
+  }
+
+
   .toast {
     position: fixed;
     top: 50%;
@@ -352,10 +466,20 @@
     height: 2rem;
   }
   .toast-title {
-    padding: 1rem 0;
+    padding: .5rem 0 .5rem;
     font-size: .18rem;
     color: #fc7939;
     text-align: center;
+    p:first-child{
+      font-size: .2rem;
+      margin-bottom: .1rem;
+    }
+    p:nth-child(2),p:nth-child(3){
+      font-size: .4rem;
+    }
+    p:last-child{
+      margin-top: .2rem;
+    }
   }
   .toast-btn {
     display: flex;

@@ -2,13 +2,13 @@
   <div class="parentInfoInitial">
     <NavTitle :title="'家长基本信息'"></NavTitle>
     <!--家长信息-未收录-->
-    <div class="main" v-if="firstMessage">
+    <div class="main">
       <div class="title"><p>家长基本信息</p></div>
       <form class="form">
         <div class="input userName">
           <img class="icon" src="../../assets/images/message_id.png" alt="">
           <el-input
-            v-model="userName"
+            v-model="username"
             placeholder="请输入家长的姓名"
           ></el-input>
         </div>
@@ -35,38 +35,6 @@
             placeholder="请输入家庭详细地址"
           ></el-input>
         </div>
-
-        <el-button @click="submitMessage" type="submit" class="submit">保存信息</el-button>
-
-      </form>
-
-
-    </div>
-    <!--家长信息-已收录-->
-    <div class="main" v-else>
-      <div class="title"><p>家长基本信息</p></div>
-      <form class="form">
-        <div class="input userName">
-          <img class="icon" src="../../assets/images/message_id.png" alt="">
-          家长姓名
-        </div>
-        <div class="input telPhone">
-          <div class="phone">
-            <img class="icon" src="../../assets/images/message_phone.png" alt="">
-            13212341234
-          </div>
-          <div class="mobilePhone">
-            <img class="icon" src="../../assets/images/message_phone.png" alt="">
-            18612341234
-          </div>
-        </div>
-        <div class="input address">
-          <img class="icon" src="../../assets/images/message_address.png" alt="">
-          重庆市沙坪坝区石桥铺微创中心
-        </div>
-
-        <el-button @click="submitMessage" type="submit" class="submit">保存信息</el-button>
-
       </form>
 
 
@@ -76,9 +44,49 @@
     <div class="main">
       <div class="title">
         <p>孩子基本信息</p>
-        <div class="addMessage">添加</div>
+        <div class="addMessage" v-if="addBtm" @click="addChild()">添加</div>
+        <div class="addMessage" v-else @click="closeChild()">取消</div>
       </div>
-      <form class="form">
+
+      <div class="childList" v-if="childListShow">
+        <el-radio-group v-model="radio">
+          <el-radio
+            v-for="(radioList , a) in childList"
+            :key="a"
+            :label="radioList.id"
+            @change="handleChangeRadio(a,childList)"
+          >{{radioList.children_name}}</el-radio>
+        </el-radio-group>
+      </div>
+
+      <form class="form" v-if="show">
+        <div class="input childName">
+          <img class="icon" src="../../assets/images/child_name.png" alt="">
+          {{this.childName}}
+        </div>
+        <div class="input childMessage">
+          <div class="age">
+            <img class="icon" src="../../assets/images/child_age.png" alt="">
+            {{this.childAge}}
+          </div>
+          <div class="sex">
+            <div v-if="childSex === '男'"><img src="../../assets/images/male.png" alt="">男</div>
+            <div v-else><img src="../../assets/images/female.png" alt="">女</div>
+          </div>
+        </div>
+        <div class="input userId">
+          <img class="icon" src="../../assets/images/message_id.png" alt="">
+          {{this.childId}}
+        </div>
+        <div class="input address">
+          <img class="icon" src="../../assets/images/child_school.png" alt="">
+          {{this.school}}
+        </div>
+
+      </form>
+
+
+      <form class="form" v-if="hidden">
         <div class="input childName">
           <img class="icon" src="../../assets/images/child_name.png" alt="">
           <el-input
@@ -114,19 +122,18 @@
           ></el-input>
         </div>
 
-        <el-button @click="submitMessage" type="submit" class="submit">支付</el-button>
       </form>
 
 
     </div>
+    <el-button @click="submitMessage" v-loading="loading" type="submit" class="submit">支付 &yen;{{this.price}}</el-button>
+
 
   </div>
 </template>
 
 <script>
   import wx from "weixin-js-sdk";
-  // import wx from require('weixin-js-sdk');
-  // import { config } from 'weixin-js-sdk';
   import NavTitle from '@/components/navTitle'
 
   export default {
@@ -134,26 +141,30 @@
     data (){
       return {
         firstMessage: true,
+        show: false,
+        hidden: false,
+        childListShow: true,
+        addBtm: true,
+        childList: [],
 
-        userName: '',
+        loading: false,
+
+        radio: '',
+        username: '',
         phone: '',
         mobilePhone: '',
         address: '',
-
         childName: '',
         childAge: '',
-        childSex: '1',
+        childSex: '',
         childId: '', // 孩子身份证
         school: '',
-
         openId: '',
-        price: 1,
+        price: 300,
         userId: '',
         sparephone: '',
         childID:  '', // 孩子ID
-
         wtId: '', // 奖券ID
-
         packageId: '', //微信支付
       }
     },
@@ -161,15 +172,12 @@
       NavTitle
     },
     methods: {
-
-
       submitMessage(){
 
         let formData = new FormData();
         formData.append('openid', this.openId);
         formData.append('price', this.price); // 价钱
         formData.append('course', JSON.stringify(this.$route.query.list[0]));  // 课程
-        console.log(this.$route.query.list)
         formData.append('parentid', this.userId);  // 用户ID
         formData.append('parentname', this.userName);   // 用户名称
         formData.append('childid', this.childID);  // 孩子ID
@@ -183,11 +191,23 @@
         formData.append('address', this.address);  // 家庭地址
         formData.append('wt_id', this.wtId);  // 奖券ID
 
-        this.$http.post('/wxPayment/wxPayCourse.action',formData)
-          .then(res =>{
-            this.packageId = res.data.data.package
-            if(res.data.code === 20000) {
-              var wxList = res.data.data
+        if(this.childName !== '' &&
+          this.phone !== '' &&
+          this.userName !== '' &&
+          this.sparephone !== '' &&
+          this.childAge !== '' &&
+          this.childSex !== '' &&
+          this.childId !== '' &&
+          this.school !== '' &&
+          this.address !== ''
+        ){
+          this.$http.post('/wxPayment/wxPayCourse.action',formData)
+            .then(res =>{
+              this.packageId = res.data.data.package
+              if(res.data.code === 20000) {
+                this.loading = true
+
+                var wxList = res.data.data
 
                 WeixinJSBridge.invoke(
                   'getBrandWCPayRequest', {
@@ -203,86 +223,84 @@
                     if(res.err_msg == "get_brand_wcpay_request:ok" ){
                       // 使用以上方式判断前端返回,微信团队郑重提示：
                       //res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
-                      alert('支付成功')
+                      this.$message({
+                        message: '支付成功',
+                        type: 'success'
+                      });
+
+                      this.$router.push({
+                        path: '/home/luckyWheel',
+                        query: {}
+                      });
 
                     }
                   });
-              // if (typeof WeixinJSBridge == "undefined"){
-              //   if( document.addEventListener ){
-              //     document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
-              //   }else if (document.attachEvent){
-              //     document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
-              //     document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
-              //   }
-              // }else{
-              //   onBridgeReady();
-              // }
-
-
-/***
-              wx.config({
-                debug:true,
-                appId: wxList.appid,
-                timeStamp:  wxList.timeStamp,
-                nonceStr: wxList.nonceStr,
-                package: wxList.package,
-                signType: "MD5",
-                paySign: wxList.paySign,
-                // jsApiList: chooseWXPay,
-              });
-              //微信支付
-              wx.ready(function() {
-                // console.log(this.jsApiCall());
-                wx.chooseWXPay({
-                  timestamp: wxList.timeStamp,
-                  nonceStr:wxList.nonceStr,
-                  package: wxList.package,
-                  signType: 'MD5',
-                  paySign: wxList.paySign,
-                  success: function () {
-                    // 支付成功后的回调函数
-                    alert("支付成功");
-
-                  },
-                  cancel: function() {
-                    alert("支付失败");
-                  }
+              } else {
+                this.loading = false
+                this.$message({
+                  message: '支付失败',
+                  type: 'warning'
                 });
-              }.bind(this));
+              }
+            })
+        }else {
+          this.$message({
+            message: '请完成您的全部信息',
+            type: 'warning'
+          });
+        }
 
-*/
-            }
-          })
 
 
-        this.$message({
-          message: '保存成功',
-          type: 'success'
-        });
+
+
       },
 
+      handleChangeRadio(index,item){
+        this.show = true
+        this.hidden = false
+        console.log(item[index])
+        var childMessage = item[index]
+        this.childAge = childMessage.children_age
+        this.childName = childMessage.children_name
+        this.school = childMessage.children_school
+        this.childSex = childMessage.children_sex
+        this.childId = childMessage.children_card
+      },
 
+      addChild(){
+        this.childListShow = false
+        this.addBtm = false
+        this.show = false
+        this.hidden = true
+        this.radio = ''
+        this.childAge = ''
+        this.childName = ''
+        this.school = ''
+        this.childSex = ''
+        this.childId =''
+      },
 
-      // appid
-      //   :
-      //   "wx93702596c4a16d03"
-      // nonceStr
-      //   :
-      //   "xisa3a7mm6wotm3pb350g8jqhobmi3x5"
-      // package
-      //   :
-      //   "prepay_id=wx3023060704103305b0e2df210966194700"
-      // paySign
-      //   :
-      //   "44C9930F4FC57E5CEA369F7744183577"
-      // timeStamp
-      //   :
-      //   "1559228764"
+      closeChild(){
+        this.childListShow = true
+        this.addBtm = true
+        this.show = false
+        this.hidden = false
+        this.radio = ''
+        this.childAge = ''
+        this.childName = ''
+        this.school = ''
+        this.childSex = ''
+        this.childId =''
+      },
 
-
-
-
-
+      getChildInfo(){
+        this.$http.get('/children/queryChildrenAndUserById.action?userId='+this.userId)
+          .then(res =>{
+            console.log(res)
+            this.childList = res.data.data.childrenList
+          })
+      }
 
     },
     created() {
@@ -294,11 +312,8 @@
       this.sparephone = userMessage.sparephone
       this.username = userMessage.nickname
       this.address = userMessage.homeAddress
-
-      console.log(this.$route.query.list[0])
-      console.log(JSON.stringify(this.$route.query.list[0]))
-
-    }
+      this.getChildInfo()
+    },
   }
 </script>
 
@@ -349,6 +364,16 @@
           }
         }
       }
+      .childList{
+        margin: .3rem 0 .1rem;
+        /deep/.el-radio-group{
+          display: flex;
+          align-items: center;
+          flex-wrap: nowrap;
+          width: 100%;
+          overflow: auto;
+        }
+      }
       .form{
         .input{
           margin-top: .1rem;
@@ -396,6 +421,10 @@
               align-items: center;
 
               margin-left: .3rem;
+              >div{
+                display: flex;
+                align-items: center;
+              }
               img{
                 display: flex;
                 align-items: center;
@@ -432,21 +461,7 @@
             }
           }
         }
-        .submit{
-          z-index: 99;
-          position: fixed;
-          bottom: 0;
-          left: 0;
-          width: 100%;
-          height: .9rem;
-          background:rgba(246,85,82,1);
-          border-radius: unset;
-          border: unset;
-          font-size: .30rem;
-          font-family:PingFang-SC-Bold;
-          font-weight:bold;
-          color:rgba(255,255,255,1);
-        }
+
       }
     }
     .line{
@@ -454,6 +469,21 @@
       width: 100%;
       display: block;
       background: RGBA(245, 245, 245, 1);
+    }
+    .submit{
+      z-index: 99;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: .9rem;
+      background:rgba(246,85,82,1);
+      border-radius: unset;
+      border: unset;
+      font-size: .30rem;
+      font-family:PingFang-SC-Bold;
+      font-weight:bold;
+      color:rgba(255,255,255,1);
     }
   }
 </style>

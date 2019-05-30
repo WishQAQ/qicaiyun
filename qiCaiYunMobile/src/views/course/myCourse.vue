@@ -75,12 +75,13 @@
         courseList: [],  // 课程
         campList: [], // 夏令营
         courseTime: '', // 订单时间
-        loading: true
+        loading: true,
+        userID: ''
       }
     },
     methods: {
       getMyCourse(){
-        this.$http.get('/parent/queryCourseAndCampList.action?id=1')
+        this.$http.get('/parent/queryCourseAndCampList.action?id='+this.userID)
           .then(res =>{
             if(res.data.code === 20000){
               this.loading = false
@@ -95,6 +96,8 @@
       }
     },
     created () {
+      var userMessage = JSON.parse(localStorage.getItem('userInfo'))
+      this.userID = userMessage.id
       this.getMyCourse()
     }
   }
