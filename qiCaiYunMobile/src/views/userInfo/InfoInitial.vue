@@ -126,7 +126,20 @@
 
 
     </div>
-    <el-button @click="submitMessage" v-loading="loading" type="submit" class="submit">支付 &yen;{{this.price}}</el-button>
+
+    <div class="prize_box" v-if="prizeShow">
+      <div class="prize_content">
+        <div class="prize_title">您的优惠券 <span @click="prizeShow =false">X</span></div>
+
+        <div class="prize_list">
+          <el-radio-group v-model="radio">
+            <el-radio @change="handleRadio(q,a)" v-for="(q , a) in myPrizeList" :key="a" :label="q.id">{{q.prizeName}}</el-radio>
+          </el-radio-group>
+        </div>
+      </div>
+    </div>
+
+    <el-button @click="submitMessage" v-loading="loading" type="submit" class="submit">支付 &yen;{{this.price - this.prizeNum}} <span v-if="this.prizeNum > 0"> 已优惠&yen;{{this.prizeNum}}元</span></el-button>
 
 
   </div>
@@ -140,6 +153,7 @@
     name: "parentInfoInitial",
     data (){
       return {
+        prizeShow: false,
         firstMessage: true,
         show: false,
         hidden: false,
@@ -164,8 +178,11 @@
         userId: '',
         sparephone: '',
         childID:  '', // 孩子ID
-        wtId: '', // 奖券ID
         packageId: '', //微信支付
+
+        myPrizeList: [],
+        prizeNum: 0,
+        prizeId: ''
       }
     },
     components:{
@@ -189,7 +206,7 @@
         formData.append('idcard', this.childId);  // 孩子身份证
         formData.append('school', this.school);   // 孩子学校
         formData.append('address', this.address);  // 家庭地址
-        formData.append('wt_id', this.wtId);  // 奖券ID
+        formData.append('wt_id', this.prizeId);  // 奖券ID
 
         if(this.childName !== '' &&
           this.phone !== '' &&
@@ -250,10 +267,25 @@
           });
         }
 
+      },
+
+      getPrize(){
+        this.$http.get('/prize/queryPrizeIdList.action?userId='+this.userId)
+          .then(res =>{
+            console.log(res)
+            this.myPrizeList = res.data.data.myPrizeList
+            if(this.myPrizeList.length>=1){
+              this.prizeShow = true
+            }
+          })
+      },
 
 
-
-
+      handleRadio(item,index){
+        this.prizeShow = false
+        console.log(item)
+        this.prizeId = item.id
+        this.prizeNum = item.prizeNum
       },
 
       handleChangeRadio(index,item){
@@ -313,6 +345,7 @@
       this.username = userMessage.nickname
       this.address = userMessage.homeAddress
       this.getChildInfo()
+      this.getPrize()
     },
   }
 </script>
@@ -485,5 +518,57 @@
       font-weight:bold;
       color:rgba(255,255,255,1);
     }
+
+
+    .prize_box{
+      position: absolute;
+      width: 100vw;
+      height: 100vh;
+      left: 0;
+      top: 0;
+      background: rgba(0,0,0,.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2;
+
+      .prize_content{
+        width: 80%;
+        height: 50%;
+        background-color: #fff;
+        padding: .5rem .2rem;
+        .prize_title{
+          text-align: center;
+          font-size: .4rem;
+          margin-bottom: .5rem;
+          position: relative;
+          span{
+            display: inline-block;
+            position: absolute;
+            right: .2rem;
+            top: -.2rem;
+            font-size: .2rem;
+            color: rgba(0,0,0,.8);
+          }
+        }
+        .prize_list{
+          height: 80%;
+          overflow: auto;
+          /deep/.el-radio-group{
+            width: 100%;
+            height: 100%;
+            .el-radio{
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              margin-bottom: .3rem;
+              margin-right: unset;
+            }
+          }
+        }
+      }
+    }
+
+
   }
 </style>
