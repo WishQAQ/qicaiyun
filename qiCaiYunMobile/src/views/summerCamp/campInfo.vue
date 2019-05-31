@@ -113,27 +113,6 @@
             {{this.school}}
           </div>
 
-          <div class="jiankang">
-            <div class="trueAndFalse">
-
-              {{this.health}}
-
-            </div>
-
-            <div class="jiankangInput">
-              <div> {{this.conditions}}</div>
-
-            </div>
-          </div>
-
-          <div class="why">
-            {{this.whychoosecamp}}
-          </div>
-
-          <div class="campTime">
-            {{this.camptime}}
-          </div>
-
           <el-button @click="submitMessage" type="submit" class="submit">支付</el-button>
         </form>
 
@@ -340,7 +319,7 @@
       },
 
       getPrize(){
-        this.$http.get('/prize/queryPrizeIdList.action?userId='+this.userId)
+        this.$http.get('/prize/selectUserPrize.action?userId='+this.userId)
           .then(res =>{
             console.log(res)
             this.myPrizeList = res.data.data.myPrizeList
@@ -366,6 +345,8 @@
       },
 
       submitMessage(){
+
+        var that = this
 
         let formData = new FormData();
         formData.append('openid', this.openId);
@@ -407,9 +388,7 @@
 
           this.$http.post('/wxPayment/wxPayCamp.action',formData)
             .then(res=>{
-              console.log(res)
               if(res.data.code === 20000) {
-                this.loading = true
                 var wxList = res.data.data
 
                 WeixinJSBridge.invoke(
@@ -422,28 +401,23 @@
                     "paySign":wxList.paySign //微信签名
                   },
                   function(res){
-                    console.log(res)
                     if(res.err_msg == "get_brand_wcpay_request:ok" ){
                       // 使用以上方式判断前端返回,微信团队郑重提示：
                       //res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
-                      this.$message({
-                        message: '支付成功',
-                        type: 'success'
-                      });
-
-                      this.$router.push({
+                      that.$router.push({
                         path: '/home/luckyWheel',
                         query: {}
-                      });
-
+                      })
                     }else {
-                      this.loading = false
-                      this.$message({
+                      that.loading = false
+                      that.$message({
                         message: '支付失败',
                         type: 'warning'
                       });
                     }
                   });
+                this.loading = true
+
               }else {
                 this.loading = false
                 this.$message({

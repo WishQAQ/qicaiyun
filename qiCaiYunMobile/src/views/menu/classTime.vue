@@ -100,12 +100,11 @@
           }
         });
 
-        console.log(this.courseList)
-
       }
     },
     created(){
-      this.list = this.$route.query.checkCourse
+      this.list = JSON.parse(localStorage.getItem('course'))
+      // console.log()
     },
   }
 </script>
@@ -148,8 +147,8 @@
           /deep/.el-select{
             .el-input{
               .el-input__inner{
-                width: 1.5rem;
-                height: .26rem;
+                width: 2rem;
+                height: 0.3rem;
                 line-height: .26rem;
                 border: .01rem solid rgba(153,153,153,1);
                 font-size: .14rem;

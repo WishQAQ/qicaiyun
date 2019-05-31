@@ -110,8 +110,10 @@
               name: 'classTime',
               course: this.courseList,
               checkCourse: this.childVal
-            }
+            },
           });
+          localStorage.setItem('course',JSON.stringify(this.childVal))
+
           this.$message({
             message: '正在跳转',
             type: 'success',

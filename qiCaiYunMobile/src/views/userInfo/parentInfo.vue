@@ -17,11 +17,11 @@
           <div class="parent_box">
             <div class="parent_message parent_phone">
               <img src="../../assets/images/message_phone.png" alt="">
-              {{this.phone}}
+              <span>{{this.phone}}</span>
             </div>
             <div class="parent_message parent_phone">
               <img src="../../assets/images/message_phone.png" alt="">
-              {{this.sparePhone}}
+              <span>{{this.sparePhone}}</span>
             </div>
           </div>
           <div class="parent_message parent_address">
@@ -166,6 +166,15 @@
           .parent_box{
             .parent_message{
               width: 50%;
+              &.parent_phone{
+                /deep/.el-input__inner{
+                  border: .01rem solid rgba(0,0,0,.5);
+                  border-radius: .2rem;
+                }
+
+              }
+
+              }
             }
           }
           .parent_address{
@@ -201,7 +210,18 @@
             display: flex;
             align-items: center;
             margin-bottom: .3rem;
+            &.parent_phone{
+              >span{
+                border: .01rem solid rgba(0,0,0,.5);
+                border-radius: .2rem;
+                padding: 0 .2rem;
+                display: inline-flex;
+                align-items: center;
+                width: 100%;
+              }
           }
+
+        }
           .parentInfo_edit{
             display: flex;
             align-items: center;
@@ -211,7 +231,6 @@
               height: .3rem;
             }
           }
-        }
       }
     }
 

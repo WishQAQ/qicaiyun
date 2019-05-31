@@ -191,6 +191,8 @@
     methods: {
       submitMessage(){
 
+        var that = this
+
         let formData = new FormData();
         formData.append('openid', this.openId);
         formData.append('price', this.price - this.prizeNum); // 价钱
@@ -236,20 +238,25 @@
                     "paySign":wxList.paySign //微信签名
                   },
                   function(res){
-                    console.log(res)
-                    if(res.err_msg == "get_brand_wcpay_request:ok" ){
+                    if(res.err_msg == "get_brand_wcpay_request:ok"){
                       // 使用以上方式判断前端返回,微信团队郑重提示：
                       //res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
-                      this.$message({
+                      that.$message({
                         message: '支付成功',
                         type: 'success'
                       });
 
-                      this.$router.push({
+                      that.$router.push({
                         path: '/home/luckyWheel',
                         query: {}
                       });
 
+                    } else {
+                      that.loading = false
+                      that.$message({
+                        message: '支付失败',
+                        type: 'warning'
+                      });
                     }
                   });
               } else {
@@ -270,7 +277,7 @@
       },
 
       getPrize(){
-        this.$http.get('/prize/queryPrizeIdList.action?userId='+this.userId)
+        this.$http.get('/prize/selectUserPrize.action?userId='+this.userId)
           .then(res =>{
             console.log(res)
             this.myPrizeList = res.data.data.myPrizeList
