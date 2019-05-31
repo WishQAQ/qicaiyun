@@ -174,31 +174,34 @@
             ></el-input>
           </div>
 
-          <div class="jiankang">
-            <div class="trueAndFalse">
-              <span>孩子身体是否健康？</span>
-              <span>
+        </form>
+
+        <div class="jiankang">
+          <div class="trueAndFalse">
+            <span>孩子身体是否健康？</span>
+            <span>
               <el-radio v-model="health" label="是">是</el-radio>
               <el-radio v-model="health" label="否">否</el-radio>
 
             </span>
-            </div>
-
-            <div class="jiankangInput">
-              <el-input v-model="conditions" placeholder="其他身体疾病比如：拥有心脏病"></el-input>
-            </div>
           </div>
 
-          <div class="why">
-            <div class="whyName">孩子为什么选择夏令营</div>
-            <el-input v-model="whychoosecamp" placeholder="请输入："></el-input>
+          <div class="jiankangInput">
+            <el-input v-model="conditions" placeholder="其他身体疾病比如：拥有心脏病"></el-input>
           </div>
+        </div>
 
-          <div class="campTime">
-            <el-radio v-model="camptime" :label="camptime">{{this.camptime}}</el-radio>
-          </div>
+        <div class="why">
+          <div class="whyName">孩子为什么选择夏令营</div>
+          <el-input v-model="whychoosecamp" placeholder="请输入："></el-input>
+        </div>
 
-        </form>
+        <div class="campTime">
+          <el-radio-group v-model="camptime">
+            <el-radio @change="handleCampRadioOne()" :label="camptimeOne">{{this.camptimeOne}}</el-radio>
+            <el-radio @change="handleCampRadioTwo()" :label="camptimeTwo">{{this.camptimeTwo}}</el-radio>
+          </el-radio-group>
+        </div>
 
 
       </div>
@@ -243,6 +246,8 @@
         radio: '',
 
         campTimeRadio: '',
+        camptimeOne: '',
+        camptimeTwo: '',
 
         openId: '',
         campid: '',  // 已选夏令营
@@ -275,6 +280,13 @@
       NavTitle
     },
     methods: {
+
+      handleCampRadioOne(){
+        this.camptime =this.camptimeOne
+      },
+      handleCampRadioTwo(){
+        this.camptime =this.camptimeTwo
+      },
 
       addChild(){
         this.childListShow = false
@@ -357,7 +369,7 @@
 
         let formData = new FormData();
         formData.append('openid', this.openId);
-        formData.append('price', this.price); // 价钱
+        formData.append('price', this.price - this.prizeNum); // 价钱
         formData.append('campid', this.campid);  // 已选夏令营
         formData.append('parentid', this.userId);  // 用户ID
         formData.append('parentname', this.userName);   // 用户名称
@@ -371,7 +383,7 @@
         formData.append('school', this.school);   // 孩子学校
         formData.append('address', this.address);  // 家庭地址
         formData.append('camptime', this.camptime);  // 夏令营学习时间
-        formData.append('wt_id', this.wtId);  // 奖券ID
+        formData.append('wt_id', this.prizeId);  // 奖券ID
 
         formData.append('whychoosecamp', this.whychoosecamp);
         formData.append('health', this.health);
@@ -454,7 +466,7 @@
       var camp = this.$route.query.list
       console.log(this.$route.query.list)
       var userMessage = JSON.parse(localStorage.getItem('userInfo'))
-      console.log(userMessage)
+      console.log(camp)
       this.userId = userMessage.id
 
       this.openId = userMessage.wxNumber
@@ -462,11 +474,13 @@
       this.phone = userMessage.phone
       this.address = userMessage.homeAddress
       this.sparePhone = userMessage.sparePhone
-      this.camptime = camp.campTime
+      this.camptimeOne = camp.campTime.split(',')[0]
+      this.camptimeTwo = camp.campTime.split(',')[1]
       this.price = camp.price
       this.campid = camp.campId
-      this.getChildInfo()
       this.getPrize()
+      this.getChildInfo()
+
     }
   }
 </script>
@@ -638,50 +652,27 @@
           }
         }
 
-        .jiankang{
-          font-size: 0.18rem;
-          font-family: PingFang-SC-Regular;
-          font-weight: 400;
-          color: #555555;
-          .trueAndFalse{
-            margin: .3rem 0 .1rem 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            .text{
-              font-size: 0.18rem;
-              font-family: PingFang-SC-Regular;
-              font-weight: 400;
-              color: #000;
-            }
-          }
-          .jiankangInput{
-            /deep/.el-input{
-              border: 0.01rem solid rgba(153, 153, 153, 0.5);
+      }
 
-              .el-input__inner {
-                border: none;
-                background: transparent;
-                height: 0.5rem;
-                line-height: 0.5rem;
-                font-size: 0.18rem;
-                font-family: PingFang-SC-Regular;
-                font-weight: 400;
-                color: #555555;
-              }
-            }
+
+      .jiankang{
+        font-size: 0.18rem;
+        font-family: PingFang-SC-Regular;
+        font-weight: 400;
+        color: #555555;
+        .trueAndFalse{
+          margin: .3rem 0 .1rem 0;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          .text{
+            font-size: 0.18rem;
+            font-family: PingFang-SC-Regular;
+            font-weight: 400;
+            color: #000;
           }
         }
-
-        .why{
-          margin: .3rem 0 ;
-          font-size: 0.18rem;
-          font-family: PingFang-SC-Regular;
-          font-weight: 400;
-          color: #555555;
-          .whyName{
-            margin-bottom: .1rem;
-          }
+        .jiankangInput{
           /deep/.el-input{
             border: 0.01rem solid rgba(153, 153, 153, 0.5);
 
@@ -697,14 +688,39 @@
             }
           }
         }
-        .campTime{
-          font-size: 0.18rem;
-          font-family: PingFang-SC-Regular;
-          font-weight: 400;
-          color: #555555;
-        }
-
       }
+
+      .why{
+        margin: .3rem 0 ;
+        font-size: 0.18rem;
+        font-family: PingFang-SC-Regular;
+        font-weight: 400;
+        color: #555555;
+        .whyName{
+          margin-bottom: .1rem;
+        }
+        /deep/.el-input{
+          border: 0.01rem solid rgba(153, 153, 153, 0.5);
+
+          .el-input__inner {
+            border: none;
+            background: transparent;
+            height: 0.5rem;
+            line-height: 0.5rem;
+            font-size: 0.18rem;
+            font-family: PingFang-SC-Regular;
+            font-weight: 400;
+            color: #555555;
+          }
+        }
+      }
+      .campTime{
+        font-size: 0.18rem;
+        font-family: PingFang-SC-Regular;
+        font-weight: 400;
+        color: #555555;
+      }
+
     }
     .line{
       height: .5rem;

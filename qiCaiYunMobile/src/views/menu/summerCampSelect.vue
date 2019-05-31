@@ -1,13 +1,13 @@
 <template>
   <div class="summerCampSelect">
-    <div class="main" v-for="(item , index) in getCamp" :key="index">
+    <div class="main" v-for="(item , index) in getCamp" :key="index" @click="getCampList(item,index)">
       <div class="cover">
         <img :src="item.campBanner" alt="">
         <span class="summerCampPrice">&yen; {{item.price}}</span>
       </div>
       <div class="message">
         <div class="message_content">
-          <div class="title">{{item.campName}}</div>
+          <div class="title"><span>{{item.campName}}</span><span class="red">已购{{item.ygNums}}人数</span></div>
           <div class="content">{{item.campIntroduce}}</div>
         </div>
         <div class="message_box">
@@ -15,7 +15,7 @@
             <p>第一期：{{item.campTime.split(',')[0]}}</p>
             <p>第二期：{{item.campTime.split(',')[1]}}</p>
           </div>
-          <div class="more" @click="getCampList(item)">更多详情</div>
+          <div class="more">更多详情</div>
         </div>
       </div>
     </div>
@@ -36,9 +36,10 @@
         this.$router.push({
           path: '/home/summerCamp',
           query: {
-            list: item
+            list:item
           }
         });
+        localStorage.setItem('campImg', item.campImages);
       }
     },
   }
@@ -51,6 +52,14 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      .title{
+        >span{
+          display: block;
+          &.red{
+            color:rgba(248,18,14,1);
+          }
+        }
+      }
       &:not(:last-child){
         margin-bottom: .22rem;
       }
@@ -110,7 +119,8 @@
             font-family:PingFang-SC-Bold;
             font-weight:bold;
             /*color:rgba(114,155,198,1);*/
-            margin-bottom: .15rem;
+            margin-bottom: .12rem;
+            height: .8rem;
           }
           .content{
             font-size: .16rem;
@@ -121,7 +131,7 @@
             overflow : hidden;
             text-overflow: ellipsis;
             display: -webkit-box;
-            -webkit-line-clamp: 4;
+            -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
           }
         }

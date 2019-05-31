@@ -19,6 +19,7 @@
       </div>
 
       <CourseSelect
+        v-on:yundongValue="yundongValue"
         v-on:childByValue="childByValue"
         ref="select"
         v-if="menuClick===1"
@@ -54,11 +55,16 @@
         loading: true,
         campLoading: true,
         childId: '',
+        yundongNum: ''
       }
     },
     methods:{
       openCourse(){
         this.menuClick = 1
+      },
+      yundongValue: function (val) {
+        // childValue就是子组件传过来的值
+        this.yundongNum = val
       },
       openSummerCamp(){
         this.menuClick = 2;
@@ -77,10 +83,25 @@
         console.log(this.childVal);
       },
       getCourseSubmit(){
+        var yundongNum = 0
+        this.childVal.map(item=>{
+          if(item.courseTypeId === 6){
+            yundongNum++
+            this.yundongNum = yundongNum
+            console.log(this.yundongNum)
+          }
+        })
+
+
         if(this.childVal['1'] === ''||this.childVal === ''){
           this.$message({
             message: '请选中课程已完成支付',
             type: 'warning'
+          });
+        }else if(this.yundongNum >= 2){
+          this.$message({
+            message: '运动课程只运行选择一个哦',
+            type: 'warning',
           });
         }else {
           this.$router.push({

@@ -2,7 +2,7 @@
   <div class="summerCamp">
     <NavTitle :title="'夏令营'"></NavTitle>
     <div class="summerImg">
-      <img :src="img" alt="">
+      <img :src="img " alt="">
     </div>
 
     <div class="submit" @click="submitSummer()">确定</div>
@@ -18,8 +18,7 @@
     name: 'summerCamp',
     data(){
       return{
-        img: '',
-
+        img: localStorage.getItem('campImg'),
       }
     },
     components:{
@@ -37,8 +36,7 @@
       }
     },
     created () {
-      var camp = this.$route.query.list
-      this.img = camp.campImages
+      // this.loaclImg = localStorage.getItem('campImg')
     }
   }
 </script>

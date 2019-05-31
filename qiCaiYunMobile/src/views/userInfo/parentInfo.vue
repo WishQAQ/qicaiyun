@@ -86,7 +86,7 @@
         sparePhone: '',
         address: '',
 
-        parentInfo: false
+        parentInfo: true
       }
     },
     components:{

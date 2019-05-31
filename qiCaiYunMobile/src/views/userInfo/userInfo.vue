@@ -63,12 +63,13 @@
       console.log(this.avatar)
     },
     methods:{
+
       getMyCourse(){
         // 我的课程
         this.$router.push({
           path: '/home/myCourse',
           query: {}
-        });
+        }); 
       },
       getMyPrize(){
         // 我的奖品

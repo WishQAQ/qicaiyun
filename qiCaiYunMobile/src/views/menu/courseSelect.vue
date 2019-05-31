@@ -43,6 +43,7 @@
         checkedCities: '',
         clickNum: 0,
         rightData:'',
+        yonndongNum: ''
       }
     },
     methods:{
@@ -56,6 +57,15 @@
         this.courseName = this.courseList[this.isActive].courseList;
       },
       handleCheckChange(){
+        if(this.yonndongNum >=2){
+          this.$message({
+            message: '运动课程只能选择一个哦',
+            type: 'warning'
+          });
+
+          this.$emit('yundongValue', this.yonndongNum)
+        }
+
         if(this.checkedList.length ==10){
           this.$message({
             message: '您已选择完十项课程',

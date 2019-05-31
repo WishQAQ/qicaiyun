@@ -3,7 +3,12 @@
     <div class="lucky-wheel">
 
       <div class="zhongjiangList">
-        <p>恭喜 刘伟 中三等奖：茶具大礼包</p>
+        <el-carousel :autoplay="true" direction="vertical">
+          <el-carousel-item v-for="(i , a) in awardList" :key="a">
+            <p>恭喜 {{i.phone}} 中 {{i.award.level}}：{{i.award.name}}</p>
+          </el-carousel-item>
+        </el-carousel>
+
       </div>
 
       <div class="wheel-main">
@@ -35,37 +40,17 @@
           <span>中奖时间</span>
           <span>奖品</span>
         </p>
+
         <div class="box_list">
-          <p>
-            <span>王静</span>
-            <span>6月1日</span>
-            <span>茶具大礼包</span>
-          </p>
-          <p>
-            <span>李娜</span>
-            <span>6月1日</span>
-            <span>30优惠劵</span>
-          </p>
-          <p>
-            <span>王芳</span>
-            <span>6月1日</span>
-            <span>10元优惠劵</span>
-          </p>
-          <p>
-            <span>张伟</span>
-            <span>5月31日</span>
-            <span>智博星学习机</span>
-          </p>
-          <p>
-            <span>李静</span>
-            <span>5月31日</span>
-            <span>小礼包</span>
-          </p>
-          <p>
-            <span>王秀英</span>
-            <span>5月31日</span>
-            <span>5元优惠券</span>
-          </p>
+
+          <el-carousel :autoplay="true" direction="vertical">
+            <el-carousel-item v-for="(w,e) in awardListBottom" :key="e">
+              <span>{{w.phone}}</span>
+              <!--            <span>{{w.time}}</span>-->
+              <span>{{w.award.name}}</span>
+            </el-carousel-item>
+          </el-carousel>
+
 
         </div>
       </div>
@@ -111,7 +96,12 @@
         userId: '',
 
         level: '',
-        levelName: ''
+        levelName: '',
+        luckyNum: '',
+
+
+        awardList: [],
+        awardListBottom: []
       };
     },
     created() {
@@ -134,21 +124,35 @@
     },
     methods: {
       //此方法为处理奖品数据
-      init_prize_list(list) {
+      init_prize_list() {
         this.$http.get('/prize/queryPrizeList.action')
           .then(res=>{
             if(res.code = 20000){
               this.loading = false
               this.prize_list = res.data.data.prizeList
-
-              this.level = this.prize_list[this.index].prize_level
-              this.levelName = this.prize_list[this.index].prize_name
             }
           })
       },
       rotate_handle() {
-        this.index = 6 || 2 || 0 //指定每次旋转到的奖品下标
+
+        var n1 = Math.round(Math.random()*1000);
+        var n2 = Math.ceil(Math.random()*2)-1;  //取0-1个数里面的值；
+        var n3 = Math.ceil(Math.random()*2)+1;  //取2-3个数里面的值；
+        var n4 = Math.ceil(Math.random()*4 + 4)-1;  //取4-7个数里面的值；
+        if(n1 < 1){
+          console.log( '高等级奖 '+n2)
+        }else if(n1 < 20){
+          console.log( '中等级奖 '+n3)
+          this.luckyNum = n3
+        }else if(n1 < 800){
+          console.log( '低等级奖 '+n4)
+          this.luckyNum = n4
+        }
+
+        this.index = this.luckyNum //指定每次旋转到的奖品下标
         this.rotating();
+
+
       },
       rotating() {
         if (!this.click_flag) return;
@@ -182,6 +186,10 @@
         }
       },
       game_over() {
+
+        this.level = this.prize_list[this.index].prize_level
+        this.levelName = this.prize_list[this.index].prize_name
+
         this.hasPrize = this.prize_list[this.index].isPrize
         console.log(this.prize_list[this.index].id)
 
@@ -199,6 +207,139 @@
         })
 
       },
+
+
+        //随机生成奖品
+        getAward() {
+          var awardArr = [{
+            name: "华为P20",
+            level: "一等奖"
+          },
+            {
+              name: "智博星学习机",
+              level: "二等奖"
+            },
+            {
+              name: "茶具大礼包",
+              level: "三等奖"
+            },
+            {
+              name: "大礼包",
+              level: "四等奖"
+            },
+            {
+              name: "30元优惠券",
+              level: "五等奖"
+            },
+            {
+              name: "小礼包",
+              level: "鼓励奖"
+            },
+            {
+              name: "10元优惠券",
+              level: "纪念奖"
+            },
+            {
+              name: "5元优惠券",
+              level: "参与奖"
+            }
+          ]
+          awardArr.sort(this.randomsort)
+          return awardArr
+        },
+
+        //获取中奖信息
+        getAwardInfo(count) {
+          var awardInfoArr = []
+          for (var i = 0; i < count; i++) {
+            var phone = this.getPhone(20)
+            var award = this.getAward()
+            var obj = {}
+            obj.phone = phone[0]
+            obj.award = award[0]
+            awardInfoArr.push(obj)
+          }
+          return awardInfoArr;
+        },
+
+        //获取时间
+        getDateStr(today, addDayCount) {
+          var date;
+          if (today) {
+            date = new Date(today);
+          } else {
+            date = new Date();
+          }
+          date.setDate(date.getDate() + addDayCount)
+          var m = date.getMonth() + 1;
+          var d = date.getDate();
+          if (m < 10) {
+            m = "0" + m;
+          }
+          if (d < 10) {
+            d = "0" + d;
+          }
+          return m + "/" + d;
+        },
+
+        //获取前天,昨天,今天
+        getFiftyDate() {
+          var dateArr = [];
+          var arr = [-2, -1, 0]
+          for (var i = 0; i < 50; i++) {
+            arr.sort(this.randomsort)
+            dateArr.push(this.getDateStr(null, arr[0]));
+          }
+          dateArr.sort();
+          return dateArr;
+        },
+
+        //生成50条中奖纪录
+        getFiftyAwardRecord() {
+          var dateArr = this.getFiftyDate();
+          console.log(dateArr)
+          var awardRecord = [];
+          for (var i = 0; i < dateArr.length; i++) {
+            var obj = {}
+            var time = dateArr[i]
+            var phone = this.getPhone(50)
+            var award = this.getAward()
+            obj.phone = phone[0];
+            obj.time = time;
+            obj.award = award[0];
+            awardRecord.push(obj)
+          }
+          return awardRecord;
+        },
+
+      randomsort(a, b) {
+        return Math.random() > 0.5 ? -1 : 1; //通过随机产生0到1的数，然后判断是否大于0.5从而影响排序，产生随机性的效果。
+      },
+
+      //生成随机手机号码数组
+      getPhone(count) {
+        var phoneArr = []
+        var arr = ["139", "138", "137", "136", "135", "134", "159", "158", "157", "150", "151", "152", "188", "187", "182", "183", "184", "178", "130", "131", "132", "156", "155", "186", "185", "176", "133", "153", "189", "180", "181", "177"]
+        // arr.sort(this.randomsort)
+        // console.log(arr)
+        for (var i = 0; i < count; i++) {
+          arr.sort(this.randomsort)
+          // 根据字典生成随机序列
+          var randomCode = function(len, dict) {
+            for (var i = 0, rs = ''; i < len; i++)
+              rs += dict.charAt(Math.floor(Math.random() * 100000000) % dict.length);
+            return rs;
+          };
+          var randomPhoneNumber = function() {
+            // 第1位是1 第2,3位是3458 第4-7位是* 最后四位随机
+            return [arr[0], '****', randomCode(4, '0123456789')].join('');
+          };
+          phoneArr.push(randomPhoneNumber())
+        }
+        return phoneArr;
+      },
+
+
       //关闭弹窗
       close_toast() {
         this.toast_control = false;
@@ -209,13 +350,34 @@
         });
       }
     },
+    mounted () {
+      this.getAward()
+      this.getAwardInfo()
+      this.getDateStr()
+      this.getFiftyDate()
+      this.getFiftyAwardRecord()
+      this.randomsort()
+      this.getPhone()
+
+      var awardRecord = this.getFiftyAwardRecord();
+      console.log("生成50条中奖信息")
+      this.awardList = awardRecord
+
+      // var awardList = []
+      var awardInfoArr = this.getAwardInfo(20);
+      console.log("生成20条中奖信息")
+      this.awardListBottom = awardInfoArr
+      console.log(this.awardListBottom)
+
+    }
   };
 </script>
 <style scoped lang="less">
   .container {
     width: 100%;
     height: calc(100vh - .9rem);
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
     background: #E02829;
   }
   .lucky-wheel {
@@ -247,7 +409,18 @@
         width: .26rem;
         height: .26rem;
         position: absolute;
-        left: .5rem;
+        left: 0.2rem;
+      }
+      /deep/.el-carousel{
+        .el-carousel__container{
+          width:6rem;
+          height: .4rem;
+          .el-carousel__item{
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+          }
+        }
       }
     }
 
@@ -413,13 +586,30 @@
       font-family:PingFang-SC-Regular;
       font-weight:400;
       color:rgba(248,248,248,1);
-      >p{
+      height: 2.3rem;
+      overflow: hidden;
+      /deep/.el-carousel{
+        overflow: unset;
+        .el-carousel__container{
+          width: 4.5rem;
+          margin: 0 auto;
+          height: .4rem;
+          .el-carousel__item{
+            display: inline-flex;
+            align-items: center;
+            justify-content: space-between;
+          }
+        }
+        .el-carousel__indicators{
+          display: none;
+        }
+      }
+      p{
         display: flex;
         align-items: center;
         justify-content: space-between;
         padding: .07rem .16rem;
-        >span{
-          width: 30%;
+        span{
           display: inline-flex;
           justify-content: center;
           &:first-child::before{
@@ -514,15 +704,6 @@
     text-align: center;
     line-height: 0.875rem;
     color: #fff;
-  }
-  .close {
-    position: absolute;
-    top: -0.5rem;
-    right: -.5rem;
-    width: .5rem;
-    height: .5rem;
-    background: url("/static/img/close_store.png") no-repeat center top;
-    background-size: 100%;
   }
 </style>
 

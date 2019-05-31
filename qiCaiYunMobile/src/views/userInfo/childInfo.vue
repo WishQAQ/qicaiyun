@@ -135,6 +135,10 @@
               this.editChildInfoBtm = false
               this.loading = true
               this.getChildInfo()
+              this.$message({
+                message: '保存成功',
+                type: 'success'
+              });
             }
           })
       },
@@ -144,6 +148,7 @@
             if(res.data.code === 20000){
               this.loading = false
               this.childInfo = res.data.data.childrenList
+
             }
             console.log(res)
           })

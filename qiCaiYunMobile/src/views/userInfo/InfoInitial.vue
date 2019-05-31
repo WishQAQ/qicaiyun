@@ -193,7 +193,7 @@
 
         let formData = new FormData();
         formData.append('openid', this.openId);
-        formData.append('price', this.price); // 价钱
+        formData.append('price', this.price - this.prizeNum); // 价钱
         formData.append('course', JSON.stringify(this.$route.query.list[0]));  // 课程
         formData.append('parentid', this.userId);  // 用户ID
         formData.append('parentname', this.userName);   // 用户名称
@@ -338,10 +338,10 @@
     created() {
       var userMessage = JSON.parse(localStorage.getItem('userInfo'))
       this.openId = userMessage.wxNumber
-
+      console.log(userMessage)
       this.userId = userMessage.id
       this.phone = userMessage.phone
-      this.sparephone = userMessage.sparephone
+      this.sparephone = userMessage.sparePhone
       this.username = userMessage.nickname
       this.address = userMessage.homeAddress
       this.getChildInfo()
@@ -353,7 +353,7 @@
 <style scoped lang="less">
   .parentInfoInitial{
     .main{
-      padding: .3rem .48rem;
+      padding: .3rem .48rem .5rem;
       .title{
         display: flex;
         align-items: center;
