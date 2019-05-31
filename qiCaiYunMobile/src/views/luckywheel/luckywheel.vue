@@ -342,7 +342,7 @@
         this.toast_control = false;
 
         this.$router.push({
-          path: '/home/userInfo',
+          path: '/home/index',
           query: {}
         });
       }

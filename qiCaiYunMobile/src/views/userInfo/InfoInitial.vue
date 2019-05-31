@@ -245,15 +245,49 @@
                     if(res.err_msg == "get_brand_wcpay_request:ok"){
                       // 使用以上方式判断前端返回,微信团队郑重提示：
                       //res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
-                      that.$message({
-                        message: '支付成功',
-                        type: 'success'
-                      });
 
-                      that.$router.push({
-                        path: '/home/luckyWheel',
-                        query: {}
-                      });
+                      let formData = new FormData();
+                      formData.append('openid', that.openId);
+                      formData.append('price', that.price - this.prizeNum); // 价钱
+                      formData.append('course', JSON.stringify(that.$route.query.list[0]));  // 课程
+                      formData.append('parentid', that.userId);  // 用户ID
+                      formData.append('parentname', that.userName);   // 用户名称
+                      formData.append('childid', that.childID);  // 孩子ID
+                      formData.append('phone', that.phone);  // 电话
+                      formData.append('sparephone', that.sparephone);  // 备用电话
+                      formData.append('childname', that.childName); // 孩子名称
+                      formData.append('age', that.childAge);  // 孩子年龄
+                      formData.append('sex', that.childSex);  // 孩子性别
+                      formData.append('idcard', that.childId);  // 孩子身份证
+                      formData.append('school', that.school);   // 孩子学校
+                      formData.append('address', that.address);  // 家庭地址
+                      formData.append('wt_id', that.prizeId);  // 奖券ID
+
+                      that.$http.post('/addCourseDan.action',formData)
+                        .then(res =>{
+                          if(res.data.code === 20000){
+                            that.$message({
+                              message: '支付成功',
+                              type: 'success'
+                            });
+
+                            that.$router.push({
+                              path: '/home/luckyWheel',
+                              query: {}
+                            });
+
+                          } else {
+                            that.loading = false
+                            that.$message({
+                              message: '支付失败',
+                              type: 'warning'
+                            });
+                          }
+
+
+                        })
+
+
 
                     } else {
                       that.loading = false
