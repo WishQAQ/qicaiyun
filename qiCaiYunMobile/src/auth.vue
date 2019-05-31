@@ -72,8 +72,8 @@
 
                         this.$http.post('/parent/register.action',formData)
                           .then(res =>{
-                            var userNewInfo = res.data.data
-                            localStorage.setItem('userInfo', JSON.stringify(userNewInfo));
+                            var userInfo = res.data.data
+                            localStorage.setItem('userInfo', JSON.stringify(userInfo));
 
                             this.$router.push({
                               path: '/home/luckyWheel',
@@ -85,8 +85,7 @@
                       }else if(res.data.code===20000){
                         console.log('已有用户')
 
-                        localStorage.setItem('userInfo', JSON.stringify(userInfo));
-
+                        localStorage.setItem('userInfo', JSON.stringify(res.data.data));
 
                         this.$router.push({
                           path: '/home/index',

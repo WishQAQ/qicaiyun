@@ -3,7 +3,7 @@
     <NavTitle :title="'基本信息'"></NavTitle>
     <div class="main_box">
       <!--家长信息-未收录-->
-      <div class="main" v-if="firstMessage">
+      <div class="main">
         <div class="title"><p>家长基本信息</p></div>
         <form class="form">
           <div class="input userName">
@@ -18,6 +18,7 @@
               <img class="icon" src="../../assets/images/message_phone.png" alt="">
               <el-input
                 v-model="phone"
+                type="number"
                 placeholder="请输入您的电话"
               ></el-input>
             </div>
@@ -25,6 +26,7 @@
               <img class="icon" src="../../assets/images/message_phone.png" alt="">
               <el-input
                 v-model="sparePhone"
+                type="number"
                 placeholder="请输入您的电话"
               ></el-input>
             </div>
@@ -36,35 +38,6 @@
               placeholder="请输入家庭详细地址"
             ></el-input>
           </div>
-        </form>
-
-
-      </div>
-      <!--家长信息-已收录-->
-      <div class="main" v-else>
-        <div class="title"><p>家长基本信息</p></div>
-        <form class="form">
-          <div class="input userName">
-            <img class="icon" src="../../assets/images/message_id.png" alt="">
-            家长姓名
-          </div>
-          <div class="input telPhone">
-            <div class="phone">
-              <img class="icon" src="../../assets/images/message_phone.png" alt="">
-              13212341234
-            </div>
-            <div class="mobilePhone">
-              <img class="icon" src="../../assets/images/message_phone.png" alt="">
-              18612341234
-            </div>
-          </div>
-          <div class="input address">
-            <img class="icon" src="../../assets/images/message_address.png" alt="">
-            重庆市沙坪坝区石桥铺微创中心
-          </div>
-
-          <el-button @click="submitMessage" type="submit" class="submit">保存信息</el-button>
-
         </form>
 
 
@@ -130,6 +103,7 @@
               <img class="icon" src="../../assets/images/child_age.png" alt="">
               <el-input
                 v-model="childAge"
+                type="number"
                 placeholder="请输入孩子的年龄"
               ></el-input>
             </div>
@@ -142,6 +116,7 @@
             <img class="icon" src="../../assets/images/message_id.png" alt="">
             <el-input
               v-model="childId"
+              type="number"
               placeholder="请输入孩子的身份证号码信息"
             ></el-input>
           </div>
@@ -404,6 +379,10 @@
                     if(res.err_msg == "get_brand_wcpay_request:ok" ){
                       // 使用以上方式判断前端返回,微信团队郑重提示：
                       //res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
+                      that.$message({
+                        message: '支付成功',
+                        type: 'success'
+                      });
                       that.$router.push({
                         path: '/home/luckyWheel',
                         query: {}
@@ -444,7 +423,7 @@
       this.userId = userMessage.id
 
       this.openId = userMessage.wxNumber
-      this.userName = userMessage.nickname
+      this.userName = userMessage.parentName
       this.phone = userMessage.phone
       this.address = userMessage.homeAddress
       this.sparePhone = userMessage.sparePhone

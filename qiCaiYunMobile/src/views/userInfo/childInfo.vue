@@ -55,11 +55,11 @@
             </div>
             <div class="child_message child_age">
               <img src="../../assets/images/child_age.png" alt="">
-              年龄：<el-input v-model="form.userAge = item.children_age"></el-input>
+              年龄：<el-input type="number" v-model="form.userAge = item.children_age"></el-input>
             </div>
             <div class="child_message child_id">
               <img src="../../assets/images/message_id.png" alt="">
-              孩子身份证件：<el-input v-model="form.userId = item.children_card"></el-input>
+              孩子身份证件：<el-input type="number" v-model="form.userId = item.children_card"></el-input>
             </div>
             <div class="child_message child_school">
               <img src="../../assets/images/child_school.png" alt="">

@@ -69,7 +69,7 @@
         this.$router.push({
           path: '/home/myCourse',
           query: {}
-        }); 
+        });
       },
       getMyPrize(){
         // 我的奖品

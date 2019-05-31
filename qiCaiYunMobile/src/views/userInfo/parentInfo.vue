@@ -44,11 +44,11 @@
             <div class="parent_box">
               <div class="parent_message parent_phone">
                 <img src="../../assets/images/message_phone.png" alt="">
-                <el-input v-model="phone"></el-input>
+                <el-input type="number" v-model="phone"></el-input>
               </div>
               <div class="parent_message parent_phone">
                 <img src="../../assets/images/message_phone.png" alt="">
-                <el-input v-model="sparePhone"></el-input>
+                <el-input type="number" v-model="sparePhone"></el-input>
               </div>
             </div>
             <div class="parent_message parent_address">
@@ -81,11 +81,11 @@
     name: "parentInfo",
     data (){
       return {
+        userId: '',
         userName: '',
         phone: '',
         sparePhone: '',
         address: '',
-
         parentInfo: true
       }
     },
@@ -94,33 +94,65 @@
     },
     created(){
       var userMessage = JSON.parse(localStorage.getItem('userInfo'))
-      this.userName = userMessage.nickname
-      this.phone = userMessage.phone
-      this.sparePhone = userMessage.sparePhone
-      this.address = userMessage.homeAddress
-      console.log(JSON.parse(localStorage.getItem('userInfo')));
+      this.userId = userMessage.id
+      this.viewUserInfo()
     },
     methods: {
+
+      viewUserInfo(){
+        this.$http.get('/parent/selectUserById.action?userId='+this.userId)
+          .then(res =>{
+            if(res.data.code === 20000){
+              var userInfo = res.data.data.user
+              this.userName = userInfo.parentName
+              this.phone = userInfo.phone
+              this.sparePhone = userInfo.sparePhone
+              this.address = userInfo.homeAddress
+            }
+          })
+      },
+
+
       addUserInfo(){
-        var editUserInfo = JSON.parse(localStorage.getItem('userInfo'))
-        editUserInfo.nickname = this.userName
-        editUserInfo.phone = this.phone
-        editUserInfo.sparePhone = this.sparePhone
-        editUserInfo.homeAddress = this.address
-        localStorage.setItem('userInfo', JSON.stringify(editUserInfo));
 
-        console.log(JSON.parse(localStorage.getItem('userInfo')));
+        let formData = new FormData();
+        formData.append('parentName', this.userName);
+        formData.append('phone', this.phone);
+        formData.append('sparePhone', this.sparePhone);
+        formData.append('homeAddress', this.address);
 
-        console.log(this.userName)
-        console.log(this.phone)
-        console.log(this.sparePhone)
-        console.log(this.address)
 
-        this.parentInfo = true
-        this.$message({
-          message: '保存成功',
-          type: 'success'
-        });
+        if(this.userName !== '' &&
+          this.phone !== '' &&
+          this.sparePhone !== '' &&
+          this.address !== ''
+        ){
+          this.$http.post('/parent/updateUser.action?id='+this.userId,formData)
+            .then(res =>{
+              if(res.data.code === 20000){
+                var editUserInfo = res.data.data.user
+                localStorage.setItem('userInfo', JSON.stringify(editUserInfo));
+                this.parentInfo = true
+                this.$message({
+                  message: '保存成功',
+                  type: 'success'
+                });
+              }else {
+                this.$message({
+                  message: '修改失败',
+                  type: 'warning'
+                });
+              }
+            })
+        }else {
+          this.$message({
+            message: '请填写个人信息',
+            type: 'warning'
+          });
+        }
+
+
+
       }
     },
   }
@@ -218,6 +250,7 @@
                 display: inline-flex;
                 align-items: center;
                 width: 100%;
+                height: .4rem;
               }
           }
 

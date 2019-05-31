@@ -16,6 +16,7 @@
           <div class="phone">
             <img class="icon" src="../../assets/images/message_phone.png" alt="">
             <el-input
+              type="number"
               v-model="phone"
               placeholder="请输入您的电话"
             ></el-input>
@@ -23,6 +24,7 @@
           <div class="mobilePhone">
             <img class="icon" src="../../assets/images/message_phone.png" alt="">
             <el-input
+              type="number"
               v-model="sparephone"
               placeholder="请输入您的电话"
             ></el-input>
@@ -98,6 +100,7 @@
           <div class="age">
             <img class="icon" src="../../assets/images/child_age.png" alt="">
             <el-input
+              type="number"
               v-model="childAge"
               placeholder="请输入孩子的年龄"
             ></el-input>
@@ -111,6 +114,7 @@
           <img class="icon" src="../../assets/images/message_id.png" alt="">
           <el-input
             v-model="childId"
+            type="number"
             placeholder="请输入孩子的身份证号码信息"
           ></el-input>
         </div>
@@ -345,11 +349,10 @@
     created() {
       var userMessage = JSON.parse(localStorage.getItem('userInfo'))
       this.openId = userMessage.wxNumber
-      console.log(userMessage)
       this.userId = userMessage.id
       this.phone = userMessage.phone
       this.sparephone = userMessage.sparePhone
-      this.username = userMessage.nickname
+      this.username = userMessage.parentName
       this.address = userMessage.homeAddress
       this.getChildInfo()
       this.getPrize()

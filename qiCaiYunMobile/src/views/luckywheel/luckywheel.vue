@@ -108,7 +108,6 @@
       this.init_prize_list();
       var userMessage = JSON.parse(localStorage.getItem('userInfo'))
       this.userId = userMessage.id
-      this.userName = userMessage.nickname
     },
     computed: {
       toast_title() {
@@ -191,7 +190,6 @@
         this.levelName = this.prize_list[this.index].prize_name
 
         this.hasPrize = this.prize_list[this.index].isPrize
-        console.log(this.prize_list[this.index].id)
 
 
         let formData = new FormData();
@@ -297,7 +295,6 @@
         //生成50条中奖纪录
         getFiftyAwardRecord() {
           var dateArr = this.getFiftyDate();
-          console.log(dateArr)
           var awardRecord = [];
           for (var i = 0; i < dateArr.length; i++) {
             var obj = {}
@@ -360,14 +357,11 @@
       this.getPhone()
 
       var awardRecord = this.getFiftyAwardRecord();
-      console.log("生成50条中奖信息")
       this.awardList = awardRecord
 
       // var awardList = []
       var awardInfoArr = this.getAwardInfo(20);
-      console.log("生成20条中奖信息")
       this.awardListBottom = awardInfoArr
-      console.log(this.awardListBottom)
 
     }
   };
