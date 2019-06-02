@@ -1,14 +1,14 @@
 <template>
   <div class="courseMenu" v-loading="loading">
-    <NavTitle :title="menuClick === 1?'课程选择':menuClick === 2?'夏令营选择':''"></NavTitle>
+    <NavTitle :title="menuClick === 1?'课程选择':menuClick === 2?'夏令营选择':menuClick === 3?'课程详情':''"></NavTitle>
     <div class="main">
-      <div class="banner" v-if="menuClick === 1"></div>
+      <div class="banner" v-if="menuClick === 1 || menuClick === 3"></div>
       <div class="banner summerCamp" v-if="menuClick === 2"></div>
 
       <div class="main_menu">
         <div
           class="menu_button"
-          v-bind:class="menuClick===1?'courseClick':''"
+          v-bind:class="menuClick===1||menuClick===3?'courseClick':''"
           @click="openCourse()"
         >课程选择</div>
         <div
@@ -25,11 +25,18 @@
         v-if="menuClick===1"
         :getCourse="courseList"
       ></CourseSelect>
+
+      <div class="courseImg" v-if="menuClick===3">
+        <img src="../../assets/images/WechatIMG45.png" alt="">
+      </div>
+
+
       <SummerCampSelect v-loading="campLoading" v-if="menuClick===2" :getCamp="campList"></SummerCampSelect>
 
     </div>
 
-    <div v-if="menuClick ===1" class="courseMenuSubmit" @click="getCourseSubmit()">确定</div>
+    <div v-if="menuClick ===3" class="courseMenuSubmit" @click="menuClick ===1">开始选择课程</div>
+    <div v-if="menuClick ===1" class="courseMenuSubmit" @click="getCourseSubmit()">提交选中课程</div>
 
   </div>
 </template>
@@ -63,7 +70,6 @@
         this.menuClick = 1
       },
       yundongValue: function (val) {
-        // childValue就是子组件传过来的值
         this.yundongNum = val
       },
       openSummerCamp(){
@@ -100,7 +106,7 @@
           });
         }else if(this.yundongNum >= 2){
           this.$message({
-            message: '运动课程只运行选择一个哦',
+            message: '运动课程只允许选择一个哦',
             type: 'warning',
           });
         }else {
@@ -126,7 +132,7 @@
           .then(res=>{
             if(res.code = 20000){
               this.loading= false
-              this.menuClick= 1
+              this.menuClick= 3
               this.courseList = res.data.data.courseTypeList
               console.log(this.courseList)
             }
@@ -173,6 +179,15 @@
             font-weight:bold;
             color:rgba(255,255,255,1);
           }
+        }
+      }
+
+
+      .courseImg{
+        width: 100%;
+        >img{
+          width: 100%;
+          display: block;
         }
       }
 

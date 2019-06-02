@@ -27,6 +27,8 @@
             <div class="title"><img src="../../assets/images/userInfo_child.png" alt="">孩子信息</div>
             <div class="getUrl"></div>
           </div>
+
+          <div class="telPhone">联系电话：<a href="tel:18623126246">18623126246</a></div>
 <!--          <div class="message_box" @click="getMessageBoard()">-->
 <!--            <div class="title"><img src="../../assets/images/userInfo_message.png" alt="">留言</div>-->
 <!--            <div class="getUrl"></div>-->
@@ -225,6 +227,23 @@
             object-fit: contain;
             width: .5rem;
             height: .5rem;
+          }
+        }
+        .telPhone{
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-top: 1.5rem;
+          font-size: .24rem;
+          font-family: PingFang-SC-Medium;
+          font-weight: 500;
+          color: rgba(85, 85, 85, 0.5);
+          >a{
+            font-size: .24rem;
+            font-family: PingFang-SC-Medium;
+            font-weight: 500;
+            color: rgba(85, 85, 85, 0.5);
+
           }
         }
       }
