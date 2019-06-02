@@ -27,7 +27,7 @@
       ></CourseSelect>
 
       <div class="courseImg" v-if="menuClick===3">
-        <img src="../../assets/images/WechatIMG45.png" alt="">
+        <img src="../../assets/images/WechatIMG49.png" alt="">
       </div>
 
 
@@ -35,7 +35,7 @@
 
     </div>
 
-    <div v-if="menuClick ===3" class="courseMenuSubmit" @click="menuClick ===1">开始选择课程</div>
+    <div v-if="menuClick ===3" class="courseMenuSubmit" @click="menuClick =1">开始选择课程</div>
     <div v-if="menuClick ===1" class="courseMenuSubmit" @click="getCourseSubmit()">提交选中课程</div>
 
   </div>
@@ -67,7 +67,7 @@
     },
     methods:{
       openCourse(){
-        this.menuClick = 1
+        this.menuClick = 3
       },
       yundongValue: function (val) {
         this.yundongNum = val
@@ -146,7 +146,7 @@
     .main{
       height: calc(100vh - 1.9rem);
       overflow: auto;
-      padding-bottom: .5rem;
+      /*padding-bottom: .5rem;*/
       .banner{
         background: url("../../assets/images/61background.jpeg") no-repeat center center;
         background-size: cover;
