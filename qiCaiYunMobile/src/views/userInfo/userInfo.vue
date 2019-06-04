@@ -27,6 +27,10 @@
             <div class="title"><img src="../../assets/images/userInfo_child.png" alt="">孩子信息</div>
             <div class="getUrl"></div>
           </div>
+          <div class="message_box" @click="getCompanyInfo()">
+            <div class="title"><img src="../../assets/images/message_address.png" alt="">公司简介</div>
+            <div class="getUrl"></div>
+          </div>
 
           <div class="telPhone">联系电话：<a href="tel:18623126246">18623126246</a></div>
 <!--          <div class="message_box" @click="getMessageBoard()">-->
@@ -91,6 +95,13 @@
         // 孩子信息
         this.$router.push({
           path: '/home/childInfo',
+          query: {}
+        });
+      },
+      getCompanyInfo(){
+        // 公司简介
+        this.$router.push({
+          path: '/home/companyInfo',
           query: {}
         });
       },
@@ -233,7 +244,7 @@
           display: flex;
           align-items: center;
           justify-content: center;
-          margin-top: 1.5rem;
+          margin-top: 1rem;
           font-size: .24rem;
           font-family: PingFang-SC-Medium;
           font-weight: 500;

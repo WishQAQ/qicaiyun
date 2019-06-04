@@ -4,7 +4,7 @@
       <div class="logo"><img src="../static/logo.png" alt=""></div>
       <div class="title">申请获取以下权限</div>
       <div class="content">获取您的公开信息（昵称，头像等）</div>
-      <div class="submit" @click="getSumit()" v-loading="loading">{{this.loading?'正在登陆':'确定'}}</div>
+      <div class="submit" @click="signUp()" v-loading="loading">{{this.loading?'正在登陆':'确定'}}</div>
     </div>
   </div>
 </template>
@@ -32,6 +32,7 @@
     },
     mounted() {
       this.getCode()
+      this.getSumit()
     },
     methods:{
       getSumit(){
@@ -64,23 +65,9 @@
                       if(res.data.code === 20013){
                         console.log('用户为空')
                         // 用户信息
-                        let formData = new FormData();
-                        formData.append('openid', this.userOpenId);
-                        formData.append('nickname', this.userName);
-                        formData.append('gender', this.userSex);
-                        formData.append('avatarUrl', this.userAvatar);
 
-                        this.$http.post('/parent/register.action',formData)
-                          .then(res =>{
-                            var userInfo = res.data.data
-                            localStorage.setItem('userInfo', JSON.stringify(userInfo));
+                        this.signUp()
 
-                            this.$router.push({
-                              path: '/home/luckyWheel',
-                              query: {}
-                            });
-
-                          })
                         // 已有用户信息进行下一步操作
                       }else if(res.data.code===20000){
                         console.log('已有用户')
@@ -103,6 +90,27 @@
             }
           })
       },
+
+      signUp(){
+        let formData = new FormData();
+        formData.append('openid', this.userOpenId);
+        formData.append('nickname', this.userName);
+        formData.append('gender', this.userSex);
+        formData.append('avatarUrl', this.userAvatar);
+
+        this.$http.post('/parent/register.action',formData)
+          .then(res =>{
+            var userInfo = res.data.data
+            localStorage.setItem('userInfo', JSON.stringify(userInfo));
+
+            this.$router.push({
+              path: '/home/luckyWheel',
+              query: {}
+            });
+
+          })
+      },
+
       getCode() { // 非静默授权，第一次有弹框
         this.loading = true
         this.code = ''

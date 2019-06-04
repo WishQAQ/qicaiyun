@@ -15,11 +15,15 @@
               :value="list.value">
             </el-option>
           </el-select>
-
         </div>
-
       </div>
+
+<!--      <div class="address_click">-->
+<!--        <div class="">地区选择：</div>-->
+<!--      </div>-->
+
     </div>
+
     <div class="courseSubmit" @click="getCourseSubmit()">确认</div>
 
   </div>

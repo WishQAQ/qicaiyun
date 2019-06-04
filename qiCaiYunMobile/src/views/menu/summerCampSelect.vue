@@ -47,7 +47,7 @@
 
 <style scoped lang="less">
   .summerCampSelect{
-    padding: 0 .25rem;
+    padding: 0 .25rem .3rem;
     .main{
       display: flex;
       align-items: center;
@@ -119,7 +119,7 @@
             font-family:PingFang-SC-Bold;
             font-weight:bold;
             /*color:rgba(114,155,198,1);*/
-            margin-bottom: .12rem;
+            /*margin-bottom: .12rem;*/
             height: .8rem;
           }
           .content{

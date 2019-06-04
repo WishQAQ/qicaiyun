@@ -16,6 +16,8 @@ const InfoInitial = () => import('@/views/userInfo/infoInitial')
 const ParentInfo = () => import('@/views/userInfo/parentInfo')
 // 孩子信息
 const ChildInfo = () => import('@/views/userInfo/childInfo')
+// 公司简介
+const CompanyInfo = () => import('@/views/userInfo/companyInfo')
 // 留言板
 const MessageBoard = () => import('@/views/messageBoard/messageBoard')
 // 我的课程courseMenu
@@ -80,6 +82,11 @@ const router = new Router({
         path: '/home/childInfo',
         name: 'ChildInfo',
         component: ChildInfo
+      },{
+        // 公司简介
+        path: '/home/companyInfo',
+        name: 'CompanyInfo',
+        component: CompanyInfo
       },{
         // 留言板
         path: '/home/messageBoard',
